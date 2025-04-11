@@ -1,14 +1,13 @@
 package oogasalad.engine.view.components;
 
+import javafx.scene.Group;
 import javafx.scene.text.Text;
-import oogasalad.engine.view.Display;
 
-public class HUD extends Display {
+public class HUD extends Group {
 
-
-  @Override
   public void initialRender() {
     Text playerScore = new Text("Score: " + "1000");
   }
+
 
 }

@@ -1,6 +1,7 @@
 package oogasalad.engine.view;
 
 import java.util.List;
+import javafx.scene.Group;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import oogasalad.engine.controller.api.GameManagerAPI;
@@ -54,7 +55,7 @@ public class ViewState {
    *
    * @param display desired display to change screen to.
    */
-  public void setDisplay(Display display) {
+  public void setDisplay(Group display) {
     checkClassCaller();
     myDefaultView.setCurrentDisplay(display);
   }

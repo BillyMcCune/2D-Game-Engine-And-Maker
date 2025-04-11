@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Objects;
 import java.util.Properties;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,7 +22,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Luke Nam, Aksel Bell
  */
-public class SplashScreen extends Display {
+public class SplashScreen extends Group {
 
   private static final Logger LOG = LogManager.getLogger();
   private static final String splashComponentPropertiesFilepath = "/oogasalad/screens/splashScene.properties";
@@ -51,7 +52,6 @@ public class SplashScreen extends Display {
     this.viewState = viewState;
   }
 
-  @Override
   public void initialRender() {
     initializeSplashScreen();
   }

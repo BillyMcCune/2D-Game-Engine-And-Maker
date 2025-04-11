@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import oogasalad.engine.view.Display;
 import oogasalad.engine.view.ViewState;
 import oogasalad.engine.view.factory.ButtonActionFactory;
 import org.apache.logging.log4j.LogManager;
@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Aksel Bell
  */
-public class GameControlPanel extends Display {
+public class GameControlPanel extends Group {
   private static final Logger LOG = LogManager.getLogger();
   private List<Button> buttons;
   private String homeButtonID = "levelHomeButton";
@@ -47,10 +47,8 @@ public class GameControlPanel extends Display {
   }
 
   /**
-   * @see Display#initialRender()
    * Adds all buttons a container.
    */
-  @Override
   public void initialRender() {
     HBox buttonContainer = new HBox();
     buttonContainer.getChildren().addAll(buttons);

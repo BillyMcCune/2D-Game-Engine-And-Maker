@@ -1,12 +1,12 @@
 package oogasalad.engine.view.components;
 
+import javafx.scene.Group;
 import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import oogasalad.engine.view.Display;
 import oogasalad.engine.view.ViewState;
 
-public class NewGameComponents extends Display {
+public class NewGameComponents extends Group {
 
   // contains a game over object if it is game ober
   // contains a play again
@@ -21,11 +21,10 @@ public class NewGameComponents extends Display {
     play = new Button("Play");
     play.setOnAction(event -> {
       viewState.getGameManager().playGame();
-      this.hide();
     });
   }
 
-  @Override
+
   public void initialRender() {
     VBox buttonContainer = new VBox();
     buttonContainer.getChildren().addAll(highScore, play);

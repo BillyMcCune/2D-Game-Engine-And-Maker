@@ -1,5 +1,6 @@
 package oogasalad.engine.view;
 
+import javafx.scene.Group;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +32,7 @@ public class GameAppViewTest extends ApplicationTest {
     Scene scene = testStage.getScene();
 
     assertNotNull(scene, "Scene should be initialized");
-    assertTrue(scene.getRoot() instanceof Display, "Scene root should be a Display");
+    assertTrue(scene.getRoot() instanceof Group, "Scene root should be a Display");
     assertTrue(scene.getRoot() instanceof SplashScreen, "Scene root should be a SplashScreen");
   }
 

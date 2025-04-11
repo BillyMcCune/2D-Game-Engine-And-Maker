@@ -34,12 +34,14 @@ public class DefaultView implements ViewAPI {
   private static final int LEVEL_HEIGHT = Integer.parseInt(
       GAME_APP_VIEW_RESOURCES.getString("LevelHeight"));
 
-  private Display currentDisplay;
+  private Group currentDisplay;
+  private GameDisplay gameDisplay;
   private Scene currentScene;
   private final Stage currentStage;
   private final GameManagerAPI gameManager;
   private List<KeyCode> currentInputs;
   private Camera myCamera;
+  ViewState viewState;
 
   /**
    * Constructor to initialize the GameAppView with a Stage reference.
@@ -50,6 +52,8 @@ public class DefaultView implements ViewAPI {
     this.myCamera = new TrackerCamera();
     currentScene = new Scene(new Group(), LEVEL_WIDTH, LEVEL_HEIGHT);
     currentInputs = new ArrayList<>();
+    this.viewState = new ViewState(stage, gameManager, this);
+    gameDisplay = new GameDisplay(viewState);
   }
 
   /**
@@ -75,8 +79,9 @@ public class DefaultView implements ViewAPI {
   public void renderGameObjects(List<ImmutableGameObject> gameObjects, Camera camera)
       throws RenderingException, FileNotFoundException {
     myCamera = camera;
-    currentDisplay.renderGameObjects(gameObjects);
-    currentDisplay.shiftNode(myCamera);
+    setCurrentDisplay(gameDisplay.getLevelView());
+    gameDisplay.renderGameObjects(gameObjects);
+    myCamera.updateCamera(currentDisplay);
   }
 
   /**
@@ -97,7 +102,7 @@ public class DefaultView implements ViewAPI {
   /**
    * Set the current display.
    */
-  void setCurrentDisplay(Display display) {
+  void setCurrentDisplay(Group display) {
     currentDisplay = display;
     currentScene.setRoot(currentDisplay);
   }
@@ -108,7 +113,7 @@ public class DefaultView implements ViewAPI {
    * @param gameObject the game object to remove
    */
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
-    currentDisplay.removeGameObjectImage(gameObject);
+    gameDisplay.removeGameObjectImage(gameObject);
   }
 
   /**

@@ -2,6 +2,7 @@ package oogasalad.engine.view;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import javafx.scene.Group;
 import oogasalad.engine.model.object.ImmutableGameObject;
 import oogasalad.engine.view.camera.Camera;
 import oogasalad.engine.view.util.ViewObjectToImageConverter;
@@ -14,7 +15,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author Aksel Bell
  */
-public class LevelDisplay extends Display {
+public class LevelDisplay extends Group {
 
   // has a background and foreground
   // need to store all the game objects and render all of them
@@ -32,10 +33,6 @@ public class LevelDisplay extends Display {
     myConverter = new ViewObjectToImageConverter();
   }
 
-  /**
-   * @see Display#initialRender()
-   */
-  @Override
   public void initialRender() {
     LOG.info("Rendering level...");
   }
@@ -60,7 +57,6 @@ public class LevelDisplay extends Display {
    *
    * @param myCamera a camera instance which the node should shift relative to.
    */
-  @Override
   public void shiftNode(Camera myCamera) {
     myCamera.updateCamera(this);
   }
@@ -70,7 +66,6 @@ public class LevelDisplay extends Display {
    *
    * @param gameObject the Immutable game object to remove from the scene
    */
-  @Override
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
     ObjectImage imageToRemove = myConverter.retrieveImageObject(gameObject);
     this.getChildren().remove(imageToRemove.getImageView());

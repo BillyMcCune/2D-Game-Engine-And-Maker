@@ -2,8 +2,8 @@ package oogasalad.engine.view;
 
 import java.io.FileNotFoundException;
 import java.util.List;
+import javafx.scene.Group;
 import oogasalad.engine.model.object.ImmutableGameObject;
-import oogasalad.engine.view.camera.Camera;
 import oogasalad.engine.view.components.GameControlPanel;
 import oogasalad.engine.view.components.HUD;
 import oogasalad.engine.view.components.NewGameComponents;
@@ -15,7 +15,7 @@ import oogasalad.exceptions.RenderingException;
  *
  * @author Aksel Bell
  */
-public class GameDisplay extends Display {
+public class GameDisplay extends Group {
 
   private final ViewState myViewState;
   private final GameControlPanel myGameControlPanel;
@@ -45,10 +45,6 @@ public class GameDisplay extends Display {
     myLevelView.renderGameObjects(gameObjects);
   }
 
-  /**
-   * @see Display#initialRender()
-   */
-  @Override
   public void initialRender() {
     this.getChildren().addAll(myHUD, myGameControlPanel, myLevelView, myNewGameComponents);
     myGameControlPanel.initialRender();
@@ -57,16 +53,11 @@ public class GameDisplay extends Display {
     myHUD.initialRender();
   }
 
-  /**
-   * Shifts the level view focus.
-   */
-  @Override
-  public void shiftNode(Camera myCamera) {
-    myLevelView.shiftNode(myCamera);
-  }
-
-  @Override
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
     myLevelView.removeGameObjectImage(gameObject);
+  }
+
+  public Group getLevelView() {
+    return myLevelView;
   }
 }
