@@ -8,250 +8,206 @@ import oogasalad.editor.model.data.object.DynamicVariable;
 import oogasalad.editor.model.data.object.event.EditorEvent;
 import oogasalad.editor.model.data.object.event.ExecutorData;
 import oogasalad.editor.view.EditorViewListener;
+import oogasalad.fileparser.records.BlueprintData;
 
 /**
- * Defines the contract between the Editor View components and the underlying Controller logic.
- * Includes methods for actions, data fetching, and listener management for view updates (Observer Pattern).
- * Methods related to event management now use indices and String types consistent with ExecutorData.
+ * Defines the primary interface for interaction between the Editor View and the Editor Model/Data.
+ * Provides methods for managing editor objects, selection, events, and listeners. Includes methods
+ * for handling prefab (BlueprintData) placement and saving.
  *
  * @author Tatum McKinnis, Jacob You
  */
 public interface EditorController {
 
   /**
-   * Requests the placement of a new game object within the editor grid.
-   * @param objectGroup Group name for the new object.
-   * @param objectNamePrefix Prefix for the new object's name.
-   * @param worldX X-coordinate for placement in world units.
-   * @param worldY Y-coordinate for placement in world units.
-   * @param cellSize Size reference for the object, typically the grid cell size.
+   * Registers a view listener to receive updates from the controller.
+   */
+  void registerViewListener(EditorViewListener listener);
+
+  /**
+   * Unregisters a previously registered view listener.
+   */
+  void unregisterViewListener(EditorViewListener listener);
+
+  /**
+   * Returns the data API that provides access to the current state of the editor data.
+   */
+  EditorDataAPI getEditorDataAPI();
+
+  // --- Object Lifecycle ---
+
+  /**
+   * Requests placement of a new object in the world at the specified coordinates.
    */
   void requestObjectPlacement(String objectGroup, String objectNamePrefix, double worldX,
       double worldY, int cellSize);
 
   /**
-   * Notifies the controller that an object has been selected in the view.
-   * This updates the controller's internal state and notifies listeners.
-   * @param objectId UUID of the selected object, or null if selection is cleared.
-   */
-  void notifyObjectSelected(UUID objectId);
-
-  /**
-   * Gets the {@link EditorDataAPI} instance used by this controller, providing access to underlying data managers.
-   * @return The EditorDataAPI instance.
-   */
-  EditorDataAPI getEditorDataAPI();
-
-  /**
-   * Notifies the controller that object selection has been cleared in the view.
-   * Equivalent to calling {@code notifyObjectSelected(null)}.
-   */
-  void notifyObjectDeselected();
-
-
-  /**
-   * Requests the removal of the specified game object from the editor model.
-   * @param objectId UUID of the object to remove.
+   * Requests removal of the object with the given UUID.
    */
   void requestObjectRemoval(UUID objectId);
 
   /**
-   * Requests an update to an existing game object using the provided data object.
-   * The object must contain a valid UUID matching an existing object.
-   * @param updatedObject The object data containing updates.
+   * Requests an update to an existing object’s properties.
    */
   void requestObjectUpdate(EditorObject updatedObject);
 
   /**
-   * Gets the full {@link EditorObject} data associated with the given UUID.
-   * @param objectId UUID of the object to retrieve.
-   * @return The {@link EditorObject}, or null if not found or an error occurs.
+   * Requests placement of a prefab (group of objects) at the specified world coordinates.
+   */
+  void requestPrefabPlacement(BlueprintData prefabData, double worldX, double worldY);
+
+  /**
+   * Saves the specified object as a new prefab.
+   */
+  void requestSaveAsPrefab(EditorObject objectToSave);
+
+  // --- Selection ---
+
+  /**
+   * Notifies the controller that a specific object was selected by the user.
+   */
+  void notifyObjectSelected(UUID objectId);
+
+  /**
+   * Notifies the controller that the user deselected the currently selected object.
+   */
+  void notifyObjectDeselected();
+
+  /**
+   * Retrieves the object corresponding to the given UUID.
    */
   EditorObject getEditorObject(UUID objectId);
 
   /**
-   * Retrieves the UUID of the topmost object located at the specified grid coordinates,
-   * considering layer priority if objects overlap.
-   * @param x X-coordinate in world units.
-   * @param y Y-coordinate in world units.
-   * @return The UUID of the object at the location, or null if no object exists there.
+   * Returns the ID of the object located at the specified grid coordinates, if any.
    */
-  UUID getObjectIDAt(double x, double y);
-
+  UUID getObjectIDAt(double gridX, double gridY);
 
   /**
-   * Adds a new event definition (identified by eventId) to the specified object.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier for the new event.
+   * Returns the UUID of the currently selected object, if any.
+   */
+  UUID getCurrentSelectedObjectId();
+
+  // --- Tool Management ---
+
+  /**
+   * Sets the currently active tool by name (e.g., "select", "place", etc.).
+   */
+  void setActiveTool(String toolName);
+
+  // --- Event Handling ---
+
+  /**
+   * Adds an event with the given ID to the specified object.
    */
   void addEvent(UUID objectId, String eventId);
 
   /**
-   * Removes an event definition (identified by eventId) from the specified object.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the event to remove.
+   * Removes the specified event from the object.
    */
   void removeEvent(UUID objectId, String eventId);
 
   /**
-   * Gets all events associated with the specified object ID.
-   * @param objectId UUID of the target object.
-   * @return A Map where keys are event IDs (String) and values are {@link EditorEvent} objects. Returns an empty map if none found or on error.
+   * Returns the full map of event IDs to event data for the specified object.
    */
   Map<String, EditorEvent> getEventsForObject(UUID objectId);
 
   /**
-   * Adds an empty condition group (representing an OR block) to the specified event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
+   * Adds a new condition group to an event (supports multiple AND/OR condition sets).
    */
   void addConditionGroup(UUID objectId, String eventId);
 
   /**
-   * Adds a condition of a specific type (identified by a string) to a specified group within an event.
-   * Conditions within a group are typically evaluated with AND logic.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the condition group (OR block) to add the condition to.
-   * @param conditionType String identifier of the condition type (e.g., "KEY_PRESSED").
+   * Adds a condition to a specific group in an event's condition structure.
    */
   void addEventCondition(UUID objectId, String eventId, int groupIndex, String conditionType);
 
   /**
-   * Removes a condition at a specific index within a specific group of an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the condition group containing the condition.
-   * @param conditionIndex Index of the condition within the group to remove.
+   * Removes a condition from a specific group in an event.
    */
   void removeEventCondition(UUID objectId, String eventId, int groupIndex, int conditionIndex);
 
   /**
-   * Removes an entire condition group (OR block) from an event at the specified index.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the condition group to remove.
+   * Removes a full group of conditions from an event.
    */
   void removeConditionGroup(UUID objectId, String eventId, int groupIndex);
 
   /**
-   * Sets a String-valued parameter for a specific condition within an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the condition group.
-   * @param conditionIndex Index of the condition within the group.
-   * @param paramName Name of the parameter to set (e.g., "key").
-   * @param value The String value for the parameter.
+   * Sets a string parameter for a specific condition within an event.
    */
-  void setEventConditionStringParameter(UUID objectId, String eventId, int groupIndex, int conditionIndex, String paramName, String value);
+  void setEventConditionStringParameter(UUID objectId, String eventId, int groupIndex,
+      int conditionIndex, String paramName, String value);
 
   /**
-   * Sets a Double-valued parameter for a specific condition within an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the condition group.
-   * @param conditionIndex Index of the condition within the group.
-   * @param paramName Name of the parameter to set (e.g., "duration").
-   * @param value The Double value for the parameter.
+   * Sets a numeric parameter for a specific condition within an event.
    */
-  void setEventConditionDoubleParameter(UUID objectId, String eventId, int groupIndex, int conditionIndex, String paramName, Double value);
+  void setEventConditionDoubleParameter(UUID objectId, String eventId, int groupIndex,
+      int conditionIndex, String paramName, Double value);
 
   /**
-   * Gets all condition groups and their conditions for a specific event.
-   * The outer list represents OR blocks, and the inner list represents AND conditions within a block.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @return A List of condition groups, where each group is a List of {@link ExecutorData}. Returns an empty list on failure or if not found.
+   * Returns all condition groups and their associated conditions for the given event.
    */
   List<List<ExecutorData>> getEventConditions(UUID objectId, String eventId);
 
   /**
-   * Gets a specific condition group (list of AND conditions) from an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param groupIndex Index of the desired condition group.
-   * @return A List of {@link ExecutorData} for the specified group, or null if the group index is invalid or an error occurs.
+   * Returns the condition group at the specified index for the given event.
    */
   List<ExecutorData> getEventConditionGroup(UUID objectId, String eventId, int groupIndex);
 
   /**
-   * Adds an outcome of a specific type (identified by a string) to an event.
-   * Outcomes are typically executed sequentially if all conditions pass.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param outcomeType String identifier of the outcome type (e.g., "MOVE_LEFT").
+   * Adds an outcome (response/action) to the specified event.
    */
   void addEventOutcome(UUID objectId, String eventId, String outcomeType);
 
   /**
-   * Removes an outcome at a specific index from an event's outcome list.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param outcomeIndex Index of the outcome to remove.
+   * Removes an outcome at the given index from the event.
    */
   void removeEventOutcome(UUID objectId, String eventId, int outcomeIndex);
 
   /**
-   * Sets a String-valued parameter for a specific outcome within an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param outcomeIndex Index of the outcome within the event's list.
-   * @param paramName Name of the parameter to set (e.g., "targetVariable").
-   * @param value The String value for the parameter.
+   * Sets a string parameter for a specific outcome in an event.
    */
-  void setEventOutcomeStringParameter(UUID objectId, String eventId, int outcomeIndex, String paramName, String value);
+  void setEventOutcomeStringParameter(UUID objectId, String eventId, int outcomeIndex,
+      String paramName, String value);
 
   /**
-   * Sets a Double-valued parameter for a specific outcome within an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param outcomeIndex Index of the outcome within the event's list.
-   * @param paramName Name of the parameter to set (e.g., "speed").
-   * @param value The Double value for the parameter.
+   * Sets a numeric parameter for a specific outcome in an event.
    */
-  void setEventOutcomeDoubleParameter(UUID objectId, String eventId, int outcomeIndex, String paramName, Double value);
+  void setEventOutcomeDoubleParameter(UUID objectId, String eventId, int outcomeIndex,
+      String paramName, Double value);
 
   /**
-   * Gets all outcomes for a specific event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @return A List of {@link ExecutorData} representing the outcomes. Returns an empty list on failure or if not found.
+   * Returns a list of all outcomes associated with the specified event.
    */
   List<ExecutorData> getEventOutcomes(UUID objectId, String eventId);
 
   /**
-   * Gets the data ({@link ExecutorData}) for a specific outcome at a given index within an event.
-   * @param objectId UUID of the target object.
-   * @param eventId String identifier of the target event.
-   * @param outcomeIndex Index of the desired outcome.
-   * @return The {@link ExecutorData} for the outcome, or null if the index is invalid or an error occurs.
+   * Retrieves data for a specific outcome by index from the event.
    */
   ExecutorData getEventOutcomeData(UUID objectId, String eventId, int outcomeIndex);
 
+  // --- Dynamic Variables ---
 
   /**
-   * Adds a new dynamic variable to the global scope (or potentially object scope later).
-   * @param variable The {@link DynamicVariable} object to add.
+   * Adds a new dynamic variable to the editor’s shared variable list.
    */
   void addDynamicVariable(DynamicVariable variable);
 
   /**
-   * Gets all available dynamic variables, potentially filtered by context (e.g., global or object-specific).
-   * @param objectId UUID of the context object (may be null for global scope, interpretation depends on implementation).
-   * @return List of available {@link DynamicVariable} objects. Returns an empty list on failure.
+   * Returns a list of dynamic variables available to the specified object.
    */
   List<DynamicVariable> getAvailableDynamicVariables(UUID objectId);
 
+  // --- Notifications ---
 
   /**
-   * Registers a listener (typically a View component) to receive notifications about model/state changes.
-   * @param listener The listener implementing {@link EditorViewListener} to register.
+   * Notifies the view that an error occurred and provides a message for display.
    */
-  void registerViewListener(EditorViewListener listener);
+  void notifyErrorOccurred(String errorMessage);
 
   /**
-   * Unregisters a previously registered listener.
-   * @param listener The listener to unregister.
+   * Notifies the view that the available prefab list has changed and should be refreshed.
    */
-  void unregisterViewListener(EditorViewListener listener);
+  void notifyPrefabsChanged();
 }

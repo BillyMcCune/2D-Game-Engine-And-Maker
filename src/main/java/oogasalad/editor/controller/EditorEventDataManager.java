@@ -65,6 +65,19 @@ public abstract class EditorEventDataManager {
   }
 
   /**
+   * Public access point to retrieve an EditorObject by its ID.
+   * Delegates to the internal getObject method.
+   *
+   * @param objectId The unique identifier of the editor object.
+   * @return The corresponding EditorObject.
+   * @throws NullPointerException     if objectId is null.
+   * @throws IllegalArgumentException if no object with the given ID is found.
+   */
+  public EditorObject getObjectById(UUID objectId) {
+    return getObject(objectId);
+  }
+
+  /**
    * Retrieves the {@link EditorEvent} for the given object and event identifier.
    *
    * @param objectId the unique identifier of the editor object
