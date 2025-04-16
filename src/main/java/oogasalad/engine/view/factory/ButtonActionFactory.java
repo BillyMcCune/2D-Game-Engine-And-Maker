@@ -150,35 +150,13 @@ public class ButtonActionFactory {
         viewState.setDisplay(game);
         viewState.getGameManager().displayGameObjects();
         viewState.getGameManager().pauseGame();
-      } catch (DataFormatException e) {
-        LOG.error("Failed to restart game due to misformatted data", e);
-      } catch (IOException e) {
-        LOG.error("Failed to restart game due to I/O errors", e);
-      } catch (ClassNotFoundException e) {
-        LOG.error("Unable to find specified class for game restart", e);
-      } catch (InvocationTargetException e) {
-        LOG.error("Invoked exception cannot be called", e);
-      } catch (NoSuchMethodException e) {
-        LOG.error("Failed to call the provided exception", e);
-      } catch (InstantiationException e) {
-        LOG.error("Unable to create exception for provided class", e);
-      } catch (IllegalAccessException e) {
-        LOG.error("Illegal permissions for accessing provided class", e);
-      } catch (LayerParseException e) {
-        LOG.error("Failed to parse layer", e);
-      } catch (LevelDataParseException e) {
-        LOG.error("Failed to parse level data", e);
-      } catch (PropertyParsingException e) {
-        LOG.error("Failed to parse property", e);
-      } catch (SpriteParseException e) {
-        LOG.error("Failed to parse sprite", e);
-      } catch (EventParseException e) {
-        LOG.error("Failed to parse event", e);
-      } catch (HitBoxParseException e) {
-        LOG.error("Failed to parse hitbox", e);
-      } catch (BlueprintParseException e) {
-        LOG.error("Failed to parse blueprint", e);
-      } catch (GameObjectParseException e) {
+      } catch (DataFormatException | IOException | ClassNotFoundException |
+       InvocationTargetException | NoSuchMethodException | InstantiationException |
+       IllegalAccessException e) {
+        LOG.error("Internal Java error not defined by a custom game exception", e);
+      } catch (LayerParseException | LevelDataParseException | PropertyParsingException |
+       SpriteParseException | EventParseException | HitBoxParseException | BlueprintParseException |
+       GameObjectParseException e) {
         LOG.error("Failed to parse game object", e);
       } catch (RenderingException e) {
         LOG.error("Failed to render game", e);
