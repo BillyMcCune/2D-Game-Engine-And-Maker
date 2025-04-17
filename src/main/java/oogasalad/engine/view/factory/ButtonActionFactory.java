@@ -5,11 +5,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.zip.DataFormatException;
 
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Modality;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -95,8 +99,8 @@ public class ButtonActionFactory {
         game.initialRender();
         viewState.setDisplay(game);
 
-        currentStage.setWidth(1000); // TODO set this to the game size
-        currentStage.setHeight(1000);
+        currentStage.setWidth(1200); // TODO set this to the game size
+        currentStage.setHeight(600);
 
         gameManager.displayGameObjects();
         setCurrentInputs(gameView.getCurrentScene()).run();
@@ -113,8 +117,21 @@ public class ButtonActionFactory {
    * @throws ViewInitializationException thrown if issue with initialization.
    */
   private Runnable openHelp() throws ViewInitializationException {
-    // TODO need to implement
-    return null;
+    return () -> {
+      WebView webView = new WebView();
+      WebEngine webEngine = webView.getEngine();
+
+      // TODO: Remove hardcoded help filepath and externalize help stage
+      URL startDocURL = getClass().getResource("/oogasalad/javadoc/oogasalad/engine/view/screen/SplashScreen.html");
+      webEngine.load(startDocURL.toExternalForm());
+
+      Stage helpStage = new Stage();
+      Scene scene = new Scene(webView, 1200, 600);
+      helpStage.setScene(scene);
+
+      helpStage.initModality(Modality.APPLICATION_MODAL);
+      helpStage.show();
+    };
   }
 
   /**
