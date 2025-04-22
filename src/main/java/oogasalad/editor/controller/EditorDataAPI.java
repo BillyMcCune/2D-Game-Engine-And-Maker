@@ -1,12 +1,24 @@
 package oogasalad.editor.controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
 import oogasalad.editor.model.data.EditorLevelData;
 import oogasalad.editor.model.data.EditorObject;
 import oogasalad.editor.model.data.Layer;
+import oogasalad.editor.model.data.SpriteSheetLibrary;
+import oogasalad.editor.model.data.SpriteTemplateMap;
 import oogasalad.editor.model.data.object.DynamicVariableContainer;
+import oogasalad.editor.model.data.object.sprite.SpriteData;
+import oogasalad.editor.model.data.object.sprite.SpriteTemplate;
+import oogasalad.editor.model.saver.EditorFileConverter;
+import oogasalad.editor.model.saver.SpriteSheetSaver;
+import oogasalad.editor.model.saver.api.EditorFileConverterAPI;
+import oogasalad.fileparser.DefaultFileParser;
+import oogasalad.fileparser.FileParserApi;
+import oogasalad.filesaver.savestrategy.SaverStrategy;
+import oogasalad.filesaver.savestrategy.XmlStrategy;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +33,7 @@ import org.apache.logging.log4j.Logger;
 public class EditorDataAPI {
 
   private static final Logger LOG = LogManager.getLogger(EditorDataAPI.class);
+  private static final FileParserApi DEFAULT_FILE_PARSER = new DefaultFileParser();
 
   private final IdentityDataManager identityAPI;
   private final HitboxDataManager hitboxAPI;
@@ -31,14 +44,18 @@ public class EditorDataAPI {
   private final EditorLevelData level;
   private final DynamicVariableContainer dynamicVariableContainer;
   private final CustomEventDataManager customEventAPI;
+  private final SpriteSheetDataManager spriteSheetAPI;
+  private final EditorFileConverterAPI fileConverterAPI;
+  private final FileParserApi fileParserAPI;
   private String currentGameDirectoryPath;
 
   /**
    * Constructs an EditorDataAPI instance, initializing the underlying {@link EditorLevelData} and
    * all related data managers.
    *
+   * @author Jacob You
    */
-  public EditorDataAPI(){
+  public EditorDataAPI() {
     this.level = new EditorLevelData();
     this.identityAPI = new IdentityDataManager(level);
     this.hitboxAPI = new HitboxDataManager(level);
@@ -48,6 +65,10 @@ public class EditorDataAPI {
     this.spriteAPI = new SpriteDataManager(level);
     this.customEventAPI = new CustomEventDataManager(level);
     this.dynamicVariableContainer = new DynamicVariableContainer();
+    this.spriteSheetAPI = new SpriteSheetDataManager(level);
+
+    this.fileConverterAPI = new EditorFileConverter();
+    this.fileParserAPI = DEFAULT_FILE_PARSER;
     LOG.info("EditorDataAPI initialized with new EditorLevelData.");
   }
 
@@ -264,6 +285,7 @@ public class EditorDataAPI {
 
   /**
    * Sets the current game directory path.
+   *
    * @param path The path to the current game directory.
    */
   public void setCurrentGameDirectoryPath(String path) {
@@ -272,6 +294,7 @@ public class EditorDataAPI {
 
   /**
    * Gets the current game directory path.
+   *
    * @return The path to the current game directory.
    */
   public String getCurrentGameDirectoryPath() {
@@ -280,19 +303,69 @@ public class EditorDataAPI {
 
   /**
    * Gets the CustomEventDataManager instance.
+   *
    * @return The CustomEventDataManager instance.
    */
   public CustomEventDataManager getCustomEventDataAPI() {
     return customEventAPI;
   }
 
+  /**
+   * Gets the current SpriteSheetDataManager instance.
+   *
+   * @return The current SpriteSheetDataManager instance
+   */
+  public SpriteSheetDataManager getSpriteSheetDataAPI() {
+    return spriteSheetAPI;
+  }
 
   /**
-   * Notifies all registered view listeners that an error has occurred, providing a descriptive message.
+   * Notifies all registered view listeners that an error has occurred, providing a descriptive
+   * message.
    *
    * @param errorMessage the error message to be reported to the listeners.
    */
   public void notifyErrorOccurred(String errorMessage) {
     LOG.error("Error occurred in EditorDataAPI: {}", errorMessage);
+  }
+
+  /**
+   * Returns the current sprite library for the current level.
+   *
+   * @return the sprite library for the current level
+   */
+  public SpriteSheetLibrary getSpriteLibrary() {
+    return level.getSpriteLibrary();
+  }
+
+  /**
+   * Returns a list of all the EditorObject instances in the current data mapping for the level
+   *
+   * @return the map of object UUID to EditorObject
+   */
+  public Map<UUID, EditorObject> getObjectDataMap() {
+    return level.getObjectDataMap();
+  }
+
+  /**
+   * Adds a sprite template to the sprite template mapping for the current level.
+   *
+   * @param spriteTemplate The sprite template to add to the level mapping
+   */
+  public void addSpriteTemplate(SpriteTemplate spriteTemplate) {
+    level.addSpriteTemplate(spriteTemplate);
+  }
+
+  /**
+   * Gets the sprite template map from the current level
+   *
+   * @return the {@link SpriteTemplateMap} for the current level
+   */
+  public SpriteTemplateMap getSpriteTemplateMap() {
+    return level.getSpriteTemplateMap();
+  }
+
+  public String getGameName() {
+    return level.getGameName();
   }
 }

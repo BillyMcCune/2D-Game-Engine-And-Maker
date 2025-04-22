@@ -7,11 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
-import java.util.logging.Logger;
 import java.util.zip.DataFormatException;
 import oogasalad.Main;
 import oogasalad.engine.controller.api.EngineFileConverterAPI;
 import oogasalad.engine.controller.camerafactory.CameraFactory;
+import oogasalad.engine.controller.camerafactory.DefaultCameraFactory;
 import oogasalad.engine.model.event.Event;
 import oogasalad.engine.model.object.Entity;
 import oogasalad.engine.model.object.GameObject;
@@ -26,6 +26,8 @@ import oogasalad.fileparser.records.CameraData;
 import oogasalad.fileparser.records.FrameData;
 import oogasalad.fileparser.records.GameObjectData;
 import oogasalad.fileparser.records.LevelData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Default implementation of the EngineFileAPI Used for converting the level data to game objects
@@ -39,8 +41,7 @@ public class DefaultEngineFileConverter implements EngineFileConverterAPI {
       DefaultEngineFileConverter.class.getPackageName() + "." + "Controller");
   private static final ResourceBundle EXCEPTIONS = ResourceBundle.getBundle(
       Main.class.getPackageName() + "." + "Exceptions");
-  private static final Logger LOG = Logger.getLogger(DefaultEngineFileConverter.class.getName());
-
+  private static final Logger LOG = LogManager.getLogger();
 
   private Map<String, GameObject> gameObjectMap;
 
@@ -75,14 +76,11 @@ public class DefaultEngineFileConverter implements EngineFileConverterAPI {
     try {
       CameraData cameraData = level.cameraData();
       String cameraType = cameraData.type();
-
-      String factoryClassName = CameraFactory.class.getPackageName() + "." + cameraType + ENGINE_FILE_RESOURCES.getString("CameraFactory");
-      Class<?> factoryClass = Class.forName(factoryClassName);
-      CameraFactory factory = (CameraFactory) factoryClass.getDeclaredConstructor().newInstance();
-      return factory.create(cameraData, gameObjectMap);
+      CameraFactory cameraFactory = new DefaultCameraFactory();
+      return cameraFactory.create(cameraType, cameraData, gameObjectMap);
 
     } catch (Exception e) {
-      LOG.warning(EXCEPTIONS.getString("FailToLoadCameraType") + ": " + e.getMessage());
+      LOG.warn(EXCEPTIONS.getString("FailToLoadCameraType") + ": " + e.getMessage());
       return new AutoScrollingCamera();
     }
   }
@@ -114,13 +112,14 @@ public class DefaultEngineFileConverter implements EngineFileConverterAPI {
         blueprintData.hitBoxData().hitBoxWidth(),
         blueprintData.hitBoxData().hitBoxHeight());
     Sprite sprite = new Sprite(frameMap, blueprintData.spriteData().baseImage(), animationMap,
-        blueprintData.hitBoxData().spriteDx(), blueprintData.hitBoxData().spriteDy(), blueprintData.spriteData().spriteFile());
+        blueprintData.hitBoxData().spriteDx(), blueprintData.hitBoxData().spriteDy(), blueprintData.spriteData().spriteFile(),
+        blueprintData.rotation(), blueprintData.isFlipped());
     List<Event> emptyEvents = new ArrayList<>();
     Map<String, String> stringParams = blueprintData.stringProperties();
     Map<String, Double> doubleParams = blueprintData.doubleProperties();
-    Map<String, Double> displayedStats = makeDisplayedStatsMap(blueprintData, doubleParams);
+    List<String> displayedStats = blueprintData.displayedProperties();
 
-    if (blueprintData.type().equals("Player")) {
+    if (blueprintData.type().equals("player")) {
       newGameObject = new Player(uniqueId, type, layer, xVelocity, yVelocity, hitBox, sprite,
           emptyEvents, displayedStats, stringParams, doubleParams);
     } else {
@@ -132,15 +131,6 @@ public class DefaultEngineFileConverter implements EngineFileConverterAPI {
         bluePrintMap);
     newGameObject.setEvents(events);
     return newGameObject;
-  }
-
-  private static Map<String, Double> makeDisplayedStatsMap(BlueprintData blueprintData,
-      Map<String, Double> doubleParams) {
-    Map<String, Double> displayedStats = new HashMap<>();
-    for (String stat : blueprintData.displayedProperties()) {
-      displayedStats.put(stat, doubleParams.getOrDefault(stat, 0.0));
-    }
-    return displayedStats;
   }
 
   private static Map<String, FrameData> makeFrameMap(BlueprintData blueprintData) {

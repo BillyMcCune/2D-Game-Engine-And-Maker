@@ -11,10 +11,15 @@ import java.util.ResourceBundle;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Translate;
 import oogasalad.Main;
+import oogasalad.engine.model.object.GameObject;
 import oogasalad.engine.model.object.ImmutableGameObject;
 import oogasalad.engine.view.ObjectImage;
 import oogasalad.fileparser.records.FrameData;
+import org.w3c.dom.css.Rect;
 
 /**
  * The {@code ViewObjectToImageConverter} class is responsible for converting
@@ -52,6 +57,8 @@ public class ViewObjectToImageConverter {
       if (UUIDToImageMap.containsKey(object.getUUID())) {
         UUIDToImageMap.get(object.getUUID())
             .updateImageLocation(object.getXPosition(), object.getYPosition());
+        moveImageViewToCurrentFrame(object, UUIDToImageMap.get(object.getUUID()).getImageView());
+        rotateAndFlip(object);
       } else {
         ObjectImage newViewObject = new ObjectImage(object);
         images.add(newViewObject);
@@ -59,6 +66,21 @@ public class ViewObjectToImageConverter {
       }
     }
     return images;
+  }
+
+  /**
+   * rotates and/or flips the object
+   *
+   * @param object game object to rotate and/or flip
+   */
+  private void rotateAndFlip(ImmutableGameObject object) {
+    if (object.getNeedsFlipped()) {
+      flipImageView(UUIDToImageMap.get(object.getUUID()).getImageView());
+      object.setNeedsFlipped(false);
+    }
+    if (object.getRotation() > 0) {
+      rotateAboutCenter(UUIDToImageMap.get(object.getUUID()).getImageView(), object.getRotation());
+    }
   }
 
   /**
@@ -82,6 +104,44 @@ public class ViewObjectToImageConverter {
     imageView.setFitHeight(viewport.getHeight());
     imageView.setViewOrder(viewObject.getLayer());
     return imageView;
+  }
+
+  public void moveImageViewToCurrentFrame(ImmutableGameObject viewObject, ImageView imageView) {
+    Rectangle2D viewport = new Rectangle2D(viewObject.getCurrentFrame().x(),
+        viewObject.getCurrentFrame().y(), viewObject.getCurrentFrame().width(),
+        viewObject.getCurrentFrame().height());
+
+    imageView.setViewport(viewport);
+    imageView.setFitWidth(viewport.getWidth());
+    imageView.setFitHeight(viewport.getHeight());
+    imageView.setViewOrder(viewObject.getLayer());
+  }
+
+  public static void flipImageView(ImageView iv) {
+    Image img = iv.getImage();
+    if (img == null) {
+      return;
+    }
+
+    double w = iv.getBoundsInLocal().getWidth();
+
+    iv.setScaleX(iv.getScaleX() > 0 ? -1 : 1);
+
+  }
+
+  /**
+   * Rotates the given ImageView by the specified angle (in degrees) about the image’s center.
+   *
+   * @param imageView the ImageView to rotate
+   * @param angle     rotation angle in degrees
+   */
+  public static void rotateAboutCenter(ImageView imageView, double angle) {
+    // clear out any old Rotate transforms so we don't stack them
+    imageView.getTransforms().removeIf(t -> t instanceof Rotate);
+
+    // tell JavaFX to rotate around the centre of the node
+    imageView.setRotationAxis(Rotate.Z_AXIS);
+    imageView.setRotate(angle);
   }
 
   /**

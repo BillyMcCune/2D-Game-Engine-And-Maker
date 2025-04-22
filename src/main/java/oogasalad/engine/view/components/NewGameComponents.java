@@ -6,6 +6,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import oogasalad.Main;
 import oogasalad.engine.model.object.ImmutableGameObject;
+import oogasalad.engine.model.object.ImmutablePlayer;
 import oogasalad.engine.view.Display;
 import oogasalad.engine.view.ViewState;
 
@@ -33,12 +34,13 @@ public class NewGameComponents extends Display {
   public NewGameComponents(ViewState viewState) {
     this.viewState = viewState;
     highScore = new Text("High score: " + 0);
+    initialize();
   }
 
   /**
    * Renders the high score text on the game engine screen.
    */
-  public void initialRender() {
+  private void initialize() {
     VBox buttonContainer = new VBox();
     buttonContainer.getChildren().add(highScore);
     buttonContainer.setSpacing(20);
@@ -51,5 +53,11 @@ public class NewGameComponents extends Display {
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
     throw new UnsupportedOperationException(EXCEPTIONS.getString("CannotRemoveGameObjectImage"));
   }
+
+  @Override
+  public void renderPlayerStats(ImmutableGameObject player) {
+    throw new UnsupportedOperationException(EXCEPTIONS.getString("CannotRenderPlayerStats"));
+  }
+
 
 }

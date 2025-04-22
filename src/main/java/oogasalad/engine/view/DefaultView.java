@@ -42,6 +42,7 @@ public class DefaultView implements ViewAPI {
   private final Stage currentStage;
   private final GameManagerAPI gameManager;
   private List<KeyCode> currentInputs;
+  private List<KeyCode> releasedInputs;
   private Camera myCamera;
 
   /**
@@ -59,11 +60,10 @@ public class DefaultView implements ViewAPI {
    * @see DefaultView#initialize()
    */
   @Override
-  public void initialize() throws ViewInitializationException {
+  public void initialize() throws ViewInitializationException, FileNotFoundException {
     ViewState currentState = new ViewState(currentStage, gameManager, this);
     SplashScreen splashScreen = new SplashScreen(currentState);
 
-    splashScreen.initialRender();
     int width = splashScreen.getSplashWidth();
     int height = splashScreen.getSplashHeight();
     currentDisplay = splashScreen;
@@ -87,6 +87,20 @@ public class DefaultView implements ViewAPI {
    */
   public List<KeyCode> getCurrentInputs() throws InputException {
     return Collections.unmodifiableList(currentInputs);
+  }
+
+  /**
+   * @see ViewAPI@getReleasedInputs()
+   */
+  public List<KeyCode> getReleasedInputs() throws InputException {
+    return Collections.unmodifiableList(releasedInputs);
+  }
+
+  /**
+   * Clears the released‑keys list so each release only fires once.
+   */
+  public void clearReleasedInputs() {
+    releasedInputs.clear();
   }
 
   /**
@@ -115,11 +129,28 @@ public class DefaultView implements ViewAPI {
   }
 
   /**
+   * renders a player's statistics within the HUD display
+   * @param player the player game object
+   */
+  public void renderPlayerStats(ImmutableGameObject player) {
+    currentDisplay.renderPlayerStats(player);
+  }
+
+  /**
    * Set the current inputs.
    *
    * @param currentInputs an arraylist to point to.
    */
   void setCurrentInputs(List<KeyCode> currentInputs) {
     this.currentInputs = currentInputs;
+  }
+
+  /**
+   * Set the released inputs.
+   *
+   * @param releasedInputs an arraylist to point to.
+   */
+  void setReleasedInputs(List<KeyCode> releasedInputs) {
+    this.releasedInputs = releasedInputs;
   }
 }

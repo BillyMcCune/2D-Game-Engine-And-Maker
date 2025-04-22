@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 import oogasalad.engine.controller.api.GameExecutor;
 import oogasalad.engine.controller.api.InputProvider;
+import oogasalad.engine.model.animation.AnimationHandlerApi;
+import oogasalad.engine.model.animation.DefaultAnimationHandler;
 import oogasalad.engine.model.event.condition.EventCondition;
 import oogasalad.engine.model.event.outcome.EventOutcome;
 import oogasalad.engine.model.object.GameObject;
@@ -34,8 +36,8 @@ public class DefaultEventHandler implements EventHandler {
    * @param gameExecutor interface that allows outcome updates to game state
    */
   public DefaultEventHandler(InputProvider inputProvider, CollisionHandler collisionHandler,
-      GameExecutor gameExecutor) {
-    outcomeExecutor = new OutcomeExecutor(collisionHandler, gameExecutor);
+      GameExecutor gameExecutor, DefaultAnimationHandler animationHandlerApi) {
+    outcomeExecutor = new OutcomeExecutor(collisionHandler, gameExecutor, animationHandlerApi);
     conditionChecker = new ConditionChecker(inputProvider, collisionHandler);
   }
 
@@ -46,31 +48,33 @@ public class DefaultEventHandler implements EventHandler {
    */
   public void handleEvent(Event event)
       throws LayerParseException, EventParseException, BlueprintParseException, IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException, DataFormatException, LevelDataParseException, PropertyParsingException, SpriteParseException, HitBoxParseException, GameObjectParseException, ClassNotFoundException, InstantiationException {
-    GameObject gameObject = event.getGameObject();
+
+    if (isValidEvent(event)) {
+      for (EventOutcome outcome : event.getOutcomes()) {
+        outcomeExecutor.executeOutcome(outcome, event.getGameObject());
+      }
+    }
+  }
+
+  private boolean isValidEvent(Event event) {
     boolean validEvent = true;
+    GameObject gameObject = event.getGameObject();
     List<List<EventCondition>> conditionGroups = event.getConditions();
 
     for (List<EventCondition> conditionGroup : conditionGroups) {
       boolean validGroup = false; // This group is false until proven true
 
       for (EventCondition eventCondition : conditionGroup) {
-        if (conditionChecker.checkCondition(eventCondition.conditionType(), gameObject)) {
+        if (conditionChecker.checkCondition(eventCondition, gameObject)) {
           validGroup = true; // One condition in this OR-group is true
           break; // No need to check further in this OR-group
         }
       }
 
       if (!validGroup) { // If the OR-group never became true, entire event is invalid
-        validEvent = false;
-        break; // No need to check further, we already know event fails
+        return false;
       }
     }
-
-    if (validEvent) {
-      for (EventOutcome outcome : event.getOutcomes()) {
-        // System.out.println("Executing Outcome: "+outcome.getOutcomeType().toString());
-        outcomeExecutor.executeOutcome(outcome, gameObject);
-      }
-    }
+    return validEvent;
   }
 }

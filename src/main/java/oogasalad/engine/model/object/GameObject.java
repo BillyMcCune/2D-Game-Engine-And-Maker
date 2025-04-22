@@ -19,7 +19,7 @@ import oogasalad.fileparser.records.FrameData;
  *
  * @author Alana Zinkin
  */
-public abstract class GameObject implements ImmutableGameObject {
+public abstract class GameObject implements ImmutableGameObject{
 
   private UUID uuid;
   private String type;
@@ -260,6 +260,34 @@ public abstract class GameObject implements ImmutableGameObject {
   @Override
   public File getSpriteFile() {
     return spriteInfo.getSpriteFile();
+  }
+
+  @Override
+  public boolean getNeedsFlipped() {
+    return spriteInfo.needsFlipped();
+  }
+
+  @Override
+  public void setNeedsFlipped(boolean didFlip) {
+    this.spriteInfo.setNeedsFlipped(didFlip);
+  }
+
+  @Override
+  public double getRotation() {
+    return spriteInfo.getRotation();
+  }
+
+  /**
+   *
+   *
+   * @return the sprite data for the game object.
+   */
+  public Sprite getSpriteInfo() {
+    return spriteInfo;
+  }
+
+  public void setCurrentFrame(FrameData currentFrame) {
+    spriteInfo.setCurrentSprite(currentFrame);
   }
 }
 

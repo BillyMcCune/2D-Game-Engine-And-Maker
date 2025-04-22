@@ -1,19 +1,23 @@
 package oogasalad.engine.view.factory;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.zip.DataFormatException;
 
-import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Modality;
+import javafx.scene.control.ComboBox;
+import oogasalad.Main;
+import oogasalad.editor.controller.EditorMaker;
+import oogasalad.editor.view.EditorApplication;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -45,7 +49,10 @@ import oogasalad.exceptions.ViewInitializationException;
 public class ButtonActionFactory {
 
   private static final Logger LOG = LogManager.getLogger();
+  private static final ResourceBundle EXCEPTIONS = ResourceBundle.getBundle(
+      Main.class.getPackage().getName() + "." + "Exceptions");
   private static final String buttonIDToActionFilePath = "/oogasalad/screens/buttonAction.properties";
+  private static final String gamesFilePath = "data/gameData/levels/";
   private static final Properties buttonIDToActionProperties = new Properties();
   private final ViewState viewState;
 
@@ -96,7 +103,6 @@ public class ButtonActionFactory {
         Stage currentStage = viewState.getStage();
 
         GameDisplay game = new GameDisplay(viewState);
-        game.initialRender();
         viewState.setDisplay(game);
 
         currentStage.setWidth(1200); // TODO set this to the game size
@@ -136,6 +142,7 @@ public class ButtonActionFactory {
 
   /**
    * Returns a runnable that resumes the game
+   *
    * @return a runnable that resumes the game
    */
   private Runnable playGame() {
@@ -146,6 +153,7 @@ public class ButtonActionFactory {
 
   /**
    * Returns a runnable that pauses the game.
+   *
    * @return a runnable that pauses the game
    */
   private Runnable pauseGame() {
@@ -156,29 +164,56 @@ public class ButtonActionFactory {
 
   /**
    * Returns a runnable that restarts the game, or throws an exception given an error
+   *
    * @return a runnable that restarts the game
    */
   private Runnable restartGame() {
     return () -> {
       try {
-        viewState.getGameManager().restartGame();
-        GameDisplay game = new GameDisplay(viewState);
-        game.initialRender();
-        viewState.setDisplay(game);
-        viewState.getGameManager().displayGameObjects();
-        viewState.getGameManager().pauseGame();
-      } catch (DataFormatException | IOException | ClassNotFoundException |
-       InvocationTargetException | NoSuchMethodException | InstantiationException |
-       IllegalAccessException e) {
-        LOG.error("Internal Java error not defined by a custom game exception", e);
-      } catch (LayerParseException | LevelDataParseException | PropertyParsingException |
-       SpriteParseException | EventParseException | HitBoxParseException | BlueprintParseException |
-       GameObjectParseException e) {
+        restart();
+      } catch (DataFormatException e) {
+        LOG.error("Failed to restart game due to misformatted data", e);
+      } catch (IOException e) {
+        LOG.error("Failed to restart game due to I/O errors", e);
+      } catch (ClassNotFoundException e) {
+        LOG.error("Unable to find specified class for game restart", e);
+      } catch (InvocationTargetException e) {
+        LOG.error("Invoked exception cannot be called", e);
+      } catch (NoSuchMethodException e) {
+        LOG.error("Failed to call the provided exception", e);
+      } catch (InstantiationException e) {
+        LOG.error("Unable to create exception for provided class", e);
+      } catch (IllegalAccessException e) {
+        LOG.error("Illegal permissions for accessing provided class", e);
+      } catch (LayerParseException e) {
+        LOG.error("Failed to parse layer", e);
+      } catch (LevelDataParseException e) {
+        LOG.error("Failed to parse level data", e);
+      } catch (PropertyParsingException e) {
+        LOG.error("Failed to parse property", e);
+      } catch (SpriteParseException e) {
+        LOG.error("Failed to parse sprite", e);
+      } catch (EventParseException e) {
+        LOG.error("Failed to parse event", e);
+      } catch (HitBoxParseException e) {
+        LOG.error("Failed to parse hitbox", e);
+      } catch (BlueprintParseException e) {
+        LOG.error("Failed to parse blueprint", e);
+      } catch (GameObjectParseException e) {
         LOG.error("Failed to parse game object", e);
       } catch (RenderingException e) {
         LOG.error("Failed to render game", e);
       }
     };
+  }
+
+  private void restart()
+      throws DataFormatException, IOException, ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException, LayerParseException, LevelDataParseException, PropertyParsingException, SpriteParseException, EventParseException, HitBoxParseException, BlueprintParseException, GameObjectParseException, RenderingException {
+    viewState.getGameManager().restartGame();
+    GameDisplay game = new GameDisplay(viewState);
+    viewState.setDisplay(game);
+    viewState.getGameManager().displayGameObjects();
+    viewState.getGameManager().pauseGame();
   }
 
   /**
@@ -198,6 +233,8 @@ public class ButtonActionFactory {
         currentStage.setScene(view.getCurrentScene());
       } catch (ViewInitializationException e) {
         LOG.error("Error returning to home screen", e);
+      } catch (FileNotFoundException e) {
+        LOG.error("The levels for the game cannot be found", e);
       }
     };
   }
@@ -207,18 +244,21 @@ public class ButtonActionFactory {
    */
   private Runnable setCurrentInputs(Scene currentScene) throws ViewInitializationException {
     List<KeyCode> currentInputs = new ArrayList<>();
-    viewState.setCurrentInputs(currentInputs);
+    List<KeyCode> releasedKeys = new ArrayList<>();
+    viewState.setCurrentInputs(currentInputs, releasedKeys);
     return () -> {
       currentScene.setOnKeyPressed(event -> {
         KeyCode keyCode = event.getCode();
         if (!currentInputs.contains(keyCode)) {
           currentInputs.add(keyCode);
+
         }
       });
 
       currentScene.setOnKeyReleased(event -> {
         KeyCode keyCode = event.getCode();
         currentInputs.remove(keyCode);
+        releasedKeys.add(keyCode);
       });
     };
   }
@@ -242,6 +282,39 @@ public class ButtonActionFactory {
           throw new RuntimeException(e);
         }
       }
+    };
+  }
+
+  /**
+   * Returns a {@link Runnable} that attempts to load and initialize a game level based on the
+   * selected game and level names. This method constructs the path to the level file using the
+   * provided game and level names and delegates to the {@code GameManager} to load the level.
+   *
+   *
+   * @param game  the name of the game (i.e., the folder name under the game levels directory)
+   * @param level the name of the level file (typically with .xml extension) inside the game folder
+   * @return a {@code Runnable} that, when executed, loads the specified level into the game engine
+   */
+  public Runnable selectLevel(String game, String level) {
+    return () -> {
+      if (game != null && level != null) {
+        try {
+          viewState.getGameManager()
+              .selectGame(gamesFilePath + game + "/" + level);
+        } catch (DataFormatException | IOException | ClassNotFoundException |
+                 InvocationTargetException | NoSuchMethodException | InstantiationException |
+                 IllegalAccessException | LayerParseException | LevelDataParseException |
+                 PropertyParsingException | SpriteParseException | EventParseException |
+                 HitBoxParseException | BlueprintParseException | GameObjectParseException e) {
+          LOG.error(EXCEPTIONS.getString("CannotSelectLevel"), e);
+        }
+      }
+    };
+  }
+
+  private Runnable openEditor() {
+    return () -> {
+      new EditorMaker(new Stage());
     };
   }
 }

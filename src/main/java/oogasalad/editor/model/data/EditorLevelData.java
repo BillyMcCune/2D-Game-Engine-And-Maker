@@ -9,9 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
-import java.util.logging.Logger;
-import oogasalad.editor.controller.EditorController;
 import oogasalad.editor.model.data.object.HitboxData;
+import oogasalad.editor.model.data.object.sprite.SpriteTemplate;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Represents the level data used by the editor, including groups, layers, and mappings between
@@ -23,7 +24,7 @@ import oogasalad.editor.model.data.object.HitboxData;
  */
 public class EditorLevelData {
 
-  private static Logger LOG = Logger.getLogger(EditorLevelData.class.getName());
+  private static final Logger LOG = LogManager.getLogger();
 
   private String gameName;
   private String levelName;
@@ -31,6 +32,8 @@ public class EditorLevelData {
   private List<Layer> myLayers;
   private Map<Layer, List<EditorObject>> myLayerDataMap;
   private Map<UUID, EditorObject> myObjectDataMap;
+  private SpriteSheetLibrary spriteLibrary;
+  private SpriteTemplateMap spriteTemplateMap;
 
   private static final Properties editorConfig = new Properties();
   private static final String propertyFile = "oogasalad/config/editorConfig.properties";
@@ -49,7 +52,7 @@ public class EditorLevelData {
    * the object data mapping. The first layer is automatically added.
    */
   public EditorLevelData() {
-    gameName = "";
+    gameName = "dinosaurgame";
     levelName = "";
     myGroups = new ArrayList<>();
     myLayers = new ArrayList<>();
@@ -57,6 +60,8 @@ public class EditorLevelData {
     getFirstLayer(); // Instantiates the first layer if it does not exist.
     myLayerDataMap.put(getFirstLayer(), new ArrayList<>());
     myObjectDataMap = new HashMap<>();
+    spriteLibrary = new SpriteSheetLibrary();
+    spriteTemplateMap = new SpriteTemplateMap();
   }
 
   /**
@@ -266,6 +271,15 @@ public class EditorLevelData {
   }
 
   /**
+   * Retrieves the current sprite library for the current level
+   *
+   * @return a {@link SpriteSheetLibrary} for the current level
+   */
+  public SpriteSheetLibrary getSpriteLibrary() {
+    return spriteLibrary;
+  }
+
+  /**
    * Retrieves a list of editor objects by the Layer.
    *
    * @return a {@link Map} where keys are the Layer object and values are a {@link List} of
@@ -276,7 +290,20 @@ public class EditorLevelData {
   }
 
   /**
+   * Adds a spriteData object to the current spriteData mapping
+   * @param spriteTemplate The spriteData to add to the mapping
+   */
+  public void addSpriteTemplate(SpriteTemplate spriteTemplate) {
+    spriteTemplateMap.addSpriteTemplate(spriteTemplate);
+  }
+
+  public SpriteTemplateMap getSpriteTemplateMap() {
+    return spriteTemplateMap;
+  }
+
+  /**
    * Retrieves the minimum and maximum dimensions of all objects.
+   * TODO: Create a record class to use this
    *
    * @return an integer array of minX, minY, maxX, maxY
    */

@@ -32,6 +32,8 @@ public class GameDisplay extends Display {
     this.myHUD = new HUD();
     this.myNewGameComponents = new NewGameComponents(viewState);
     this.myLevelView = new LevelDisplay(); //sets background and sets to pause
+
+    this.getChildren().addAll(myGameControlPanel, myLevelView, myNewGameComponents, myHUD);
   }
 
   /**
@@ -46,17 +48,6 @@ public class GameDisplay extends Display {
   }
 
   /**
-   * renders the Game Display
-   */
-  public void initialRender() {
-    this.getChildren().addAll(myHUD, myGameControlPanel, myLevelView, myNewGameComponents);
-    myGameControlPanel.initialRender();
-    myLevelView.initialRender();
-    myNewGameComponents.initialRender();
-    myHUD.initialRender();
-  }
-
-  /**
    * Shifts the level view focus.
    */
   @Override
@@ -67,5 +58,10 @@ public class GameDisplay extends Display {
   @Override
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
     myLevelView.removeGameObjectImage(gameObject);
+  }
+
+  @Override
+  public void renderPlayerStats(ImmutableGameObject player) {
+    myHUD.renderPlayerStats(player);
   }
 }

@@ -10,7 +10,8 @@ import oogasalad.engine.model.event.condition.EventCondition;
 import oogasalad.engine.model.event.condition.EventCondition.ConditionType;
 import oogasalad.engine.model.event.condition.InputCondition;
 import oogasalad.engine.model.event.condition.TrueCondition;
-import oogasalad.engine.model.event.condition.VariableThresholdCondition;
+import oogasalad.engine.model.event.condition.VariableGreaterThanThresholdCondition;
+import oogasalad.engine.model.event.condition.VariableLessThanThresholdCondition;
 import oogasalad.engine.model.object.GameObject;
 
 /**
@@ -30,45 +31,31 @@ public class ConditionChecker {
    */
   public ConditionChecker(InputProvider inputProvider, CollisionHandler collisionHandler) {
     this.conditionMap = new HashMap<>();
-    conditionMap.put(EventCondition.ConditionType.SPACE_KEY_PRESSED,
-        new InputCondition(inputProvider, KeyCode.SPACE));
-    conditionMap.put(EventCondition.ConditionType.W_KEY_PRESSED,
-        new InputCondition(inputProvider, KeyCode.W));
-    conditionMap.put(EventCondition.ConditionType.A_KEY_PRESSED,
-        new InputCondition(inputProvider, KeyCode.A));
-    conditionMap.put(EventCondition.ConditionType.S_KEY_PRESSED,
-        new InputCondition(inputProvider, KeyCode.S));
-    conditionMap.put(EventCondition.ConditionType.D_KEY_PRESSED,
-        new InputCondition(inputProvider, KeyCode.D));
-    conditionMap.put(EventCondition.ConditionType.UP_ARROW_PRESSED,
-        new InputCondition(inputProvider, KeyCode.UP));
-    conditionMap.put(EventCondition.ConditionType.COLLIDED_WITH_ENEMY,
-        new CollisionCondition(collisionHandler, "enemy"));
     conditionMap.put(EventCondition.ConditionType.TRUE,
         new TrueCondition());
-    conditionMap.put(EventCondition.ConditionType.COLLIDED_WITH_PLAYER,
-        new CollisionCondition(collisionHandler, "player"));
-    conditionMap.put(EventCondition.ConditionType.COLLIDED_WITH_PLATFORM,
-        new CollisionCondition(collisionHandler, "platforms"));
-    conditionMap.put(EventCondition.ConditionType.RIGHT_ARROW_PRESSED,
-        new InputCondition(inputProvider, KeyCode.RIGHT));
-    conditionMap.put(EventCondition.ConditionType.LEFT_ARROW_PRESSED,
-        new InputCondition(inputProvider, KeyCode.LEFT));
-    conditionMap.put(ConditionType.VARIABLE_THRESHOLD,
-        new VariableThresholdCondition());
+    conditionMap.put(EventCondition.ConditionType.KEY_PRESSED,
+        new InputCondition(inputProvider, true));
+    conditionMap.put(ConditionType.KEY_RELEASED, new
+        InputCondition(inputProvider, false));
+    conditionMap.put(EventCondition.ConditionType.COLLIDED_WITH_GROUP,
+        new CollisionCondition(collisionHandler));
+    conditionMap.put(ConditionType.LESS_THAN_VARIABLE_THRESHOLD,
+        new VariableLessThanThresholdCondition());
+    conditionMap.put(ConditionType.GREATER_VARIABLE_THRESHOLD,
+        new VariableGreaterThanThresholdCondition());
 
   }
 
   /**
    * evaluates condition
    *
-   * @param conditionType -> type of condition
+   * @param eventCondition -> event model containing type and parameters
    * @param gameObject    requires use of predefined mapping of conditionType -> expected params
    * @return true or false
    */
-  public boolean checkCondition(EventCondition.ConditionType conditionType, GameObject gameObject) {
-    Condition condition = conditionMap.get(conditionType);
-    return condition.isMet(gameObject);
+  public boolean checkCondition(EventCondition eventCondition, GameObject gameObject) {
+    Condition condition = conditionMap.get(eventCondition.conditionType());
+    return condition.isMet(gameObject, eventCondition.stringProperties(), eventCondition.doubleProperties());
 
   }
 

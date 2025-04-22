@@ -34,6 +34,13 @@ public class Sprite {
   private Map<String, FrameData> frameMap;
   private Map<String, AnimationData> animations;
   private File spriteFile;
+  private String currAnimation;
+  private int frameNumber;
+  private int animationNumber;
+  private FrameData baseSprite;
+  private boolean needsFlipped;
+  private double rotation;
+
 
   /**
    * Constructs a new {@code Sprite} with the provided frame data and rendering offsets.
@@ -45,14 +52,19 @@ public class Sprite {
    * @param spriteDy      the vertical offset of the sprite relative to the hitbox
    */
   public Sprite(Map<String, FrameData> frameMap, FrameData currentSprite,
-      Map<String, AnimationData> animations, int spriteDx, int spriteDy, File spriteFile) {
+      Map<String, AnimationData> animations, int spriteDx, int spriteDy, File spriteFile, double rotation, boolean needsFlipped) {
     this.spriteDx = spriteDx;
     this.spriteDy = spriteDy;
     this.frameMap = frameMap;
     this.currentSprite = currentSprite;
+    this.baseSprite = currentSprite;
     this.animations = animations;
     this.spriteFile = spriteFile;
-
+    this.frameNumber = 0;
+    this.animationNumber = 0;
+    this.currAnimation = "base";
+    this.needsFlipped = needsFlipped;
+    this.rotation = rotation;
   }
 
   /**
@@ -111,5 +123,88 @@ public class Sprite {
   public File getSpriteFile() {
     return spriteFile;
   }
+
+  /**
+   *
+   * @return the current animation the sprite is on
+   */
+  public String getCurrAnimation() {
+    return currAnimation;
+  }
+
+  /**
+   *
+   * @return the current frame number in relation to framelen of the animation
+   */
+  public int getFrameNumber() {
+    return frameNumber;
+  }
+
+  /**
+   *
+   *
+   * @return the current animation number in relation to the List of frames  in the animation data
+   */
+  public int getAnimationNumber() {
+    return animationNumber;
+  }
+
+  /**
+   *
+   *
+   * @return all the animations that the sprite has.
+   */
+  public  Map<String, AnimationData> getAnimations() {
+    return animations;
+  }
+
+  /**
+   *
+   *
+   */
+    public FrameData getBaseSprite() {
+      return baseSprite;
+    }
+
+    public void setCurrentSprite(FrameData currentSprite) {
+      this.currentSprite = currentSprite;
+    }
+
+    public void setBaseSprite(FrameData baseSprite) {
+      this.baseSprite = baseSprite;
+    }
+
+
+    /**
+     *
+     *
+     * @return a boolean if the object is flipped by default for most objects flipping will have the object face left.
+     */
+    public boolean needsFlipped() {
+      return needsFlipped;
+    }
+
+
+    public void setNeedsFlipped(boolean needsFlipped) {
+      this.needsFlipped = needsFlipped;
+    }
+
+  /**
+   *
+   * @return the rotation of the object about its center.
+   */
+  public double getRotation() {
+      return rotation;
+    }
+
+  /**
+   *
+   *
+   * @param rotation the rotation of the sprite image.
+   */
+  public void setRotation(double rotation) {
+      this.rotation = rotation;
+    }
+
 }
 
