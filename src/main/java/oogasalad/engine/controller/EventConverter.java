@@ -20,11 +20,11 @@ import org.apache.logging.log4j.Logger;
  * constructed {@link Event} objects tied to a specific {@link GameObject}.
  *
  * <p>This conversion includes parsing the event's conditions, outcomes, and type.
+ *
+ * @author Alana Zinkin
  */
 public class EventConverter {
 
-  private static final org.apache.logging.log4j.Logger log = LogManager.getLogger(
-      EventConverter.class);
   private static final Logger LOG = LogManager.getLogger();
   /**
    * Converts all event data associated with a {@link GameObjectData} instance into a list of
@@ -77,13 +77,6 @@ public class EventConverter {
             EventCondition.ConditionType.valueOf(condition.name()), condition.stringProperties(),
             condition.doubleProperties());
 
-        for (Map.Entry<String,String> e : condition.stringProperties().entrySet()) {
-          LOG.info("stringProperty: " + e.getKey() + " -> " + e.getValue());
-        }
-
-        for (Map.Entry<String,Double> e : condition.doubleProperties().entrySet()) {
-          LOG.info("doubleProperty: " + e.getKey() + " -> " + e.getValue());
-        }
         conditions.add(newCondition);
       }
       eventConditions.add(conditions);

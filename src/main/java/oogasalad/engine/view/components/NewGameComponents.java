@@ -1,12 +1,10 @@
 package oogasalad.engine.view.components;
 
-import java.util.ResourceBundle;
-import javafx.scene.control.Button;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import oogasalad.Main;
+import oogasalad.ResourceManager;
+import oogasalad.ResourceManagerAPI;
 import oogasalad.engine.model.object.ImmutableGameObject;
-import oogasalad.engine.model.object.ImmutablePlayer;
 import oogasalad.engine.view.Display;
 import oogasalad.engine.view.ViewState;
 
@@ -17,14 +15,12 @@ import oogasalad.engine.view.ViewState;
  */
 public class NewGameComponents extends Display {
 
-  private static final ResourceBundle EXCEPTIONS = ResourceBundle.getBundle(
-      Main.class.getPackage().getName() + "." + "Exceptions");
+  private static final ResourceManagerAPI resourceManager = ResourceManager.getInstance();
 
   // contains a game over object if it is game ober
   // contains a play again
   // contains a high score object
   private final ViewState viewState;
-  private final Text highScore;
 
   /**
    * Constructor for the NewGameComponents class that initializes the high score text.
@@ -33,7 +29,6 @@ public class NewGameComponents extends Display {
    */
   public NewGameComponents(ViewState viewState) {
     this.viewState = viewState;
-    highScore = new Text("High score: " + 0);
     initialize();
   }
 
@@ -42,7 +37,6 @@ public class NewGameComponents extends Display {
    */
   private void initialize() {
     VBox buttonContainer = new VBox();
-    buttonContainer.getChildren().add(highScore);
     buttonContainer.setSpacing(20);
     buttonContainer.setLayoutX(250); // change to levelViewWidth / 2
 
@@ -51,12 +45,17 @@ public class NewGameComponents extends Display {
 
   @Override
   public void removeGameObjectImage(ImmutableGameObject gameObject) {
-    throw new UnsupportedOperationException(EXCEPTIONS.getString("CannotRemoveGameObjectImage"));
+    throw new UnsupportedOperationException(resourceManager.getText("exceptions","CannotRemoveGameObjectImage"));
+  }
+
+  @Override
+  public void addGameObjectImage(ImmutableGameObject gameObject) {
+    throw new UnsupportedOperationException(resourceManager.getText("exceptions","CannotRemoveGameObjectImage"));
   }
 
   @Override
   public void renderPlayerStats(ImmutableGameObject player) {
-    throw new UnsupportedOperationException(EXCEPTIONS.getString("CannotRenderPlayerStats"));
+    throw new UnsupportedOperationException(resourceManager.getText("exceptions","CannotRenderPlayerStats"));
   }
 
 

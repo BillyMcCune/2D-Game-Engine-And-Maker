@@ -7,30 +7,27 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.ResourceBundle;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Translate;
-import oogasalad.Main;
-import oogasalad.engine.model.object.GameObject;
+import oogasalad.ResourceManager;
+import oogasalad.ResourceManagerAPI;
 import oogasalad.engine.model.object.ImmutableGameObject;
 import oogasalad.engine.view.ObjectImage;
 import oogasalad.fileparser.records.FrameData;
-import org.w3c.dom.css.Rect;
 
 /**
  * The {@code ViewObjectToImageConverter} class is responsible for converting
  * {@link ImmutableGameObject} instances into {@link ObjectImage} representations that can be
  * rendered in the game view. It also provides utility methods to convert a single {@link FrameData}
  * into an {@link ImageView}.
+ *
+ * @author Alana Zinkin, Billy McCune
  */
 public class ViewObjectToImageConverter {
 
-  private static final ResourceBundle EXCEPTIONS = ResourceBundle.getBundle(
-      Main.class.getPackageName() + "." + "Exceptions");
+  private static final ResourceManagerAPI resourceManager = ResourceManager.getInstance();
 
   private final Map<String, ObjectImage> UUIDToImageMap;
 
@@ -94,19 +91,11 @@ public class ViewObjectToImageConverter {
   public ImageView convertFrameToView(ImmutableGameObject viewObject) throws FileNotFoundException {
     Image sprite = new Image(new FileInputStream(viewObject.getSpriteFile()));
     ImageView imageView = new ImageView(sprite);
-
-    Rectangle2D viewport = new Rectangle2D(viewObject.getCurrentFrame().x(),
-        viewObject.getCurrentFrame().y(), viewObject.getCurrentFrame().width(),
-        viewObject.getCurrentFrame().height());
-
-    imageView.setViewport(viewport);
-    imageView.setFitWidth(viewport.getWidth());
-    imageView.setFitHeight(viewport.getHeight());
-    imageView.setViewOrder(viewObject.getLayer());
+    makeViewport(viewObject, imageView);
     return imageView;
   }
 
-  public void moveImageViewToCurrentFrame(ImmutableGameObject viewObject, ImageView imageView) {
+  private static void makeViewport(ImmutableGameObject viewObject, ImageView imageView) {
     Rectangle2D viewport = new Rectangle2D(viewObject.getCurrentFrame().x(),
         viewObject.getCurrentFrame().y(), viewObject.getCurrentFrame().width(),
         viewObject.getCurrentFrame().height());
@@ -117,6 +106,15 @@ public class ViewObjectToImageConverter {
     imageView.setViewOrder(viewObject.getLayer());
   }
 
+  public void moveImageViewToCurrentFrame(ImmutableGameObject viewObject, ImageView imageView) {
+    makeViewport(viewObject, imageView);
+  }
+
+  /**
+   * flips the image view
+   *
+   * @param iv the image view to flip
+   */
   public static void flipImageView(ImageView iv) {
     Image img = iv.getImage();
     if (img == null) {
@@ -156,6 +154,6 @@ public class ViewObjectToImageConverter {
     if (UUIDToImageMap.containsKey(gameObject.getUUID())) {
       return UUIDToImageMap.get(gameObject.getUUID());
     }
-    throw new NoSuchElementException(EXCEPTIONS.getString("NoImage"));
+    throw new NoSuchElementException(resourceManager.getText("Exceptions", "NoImage"));
   }
 }

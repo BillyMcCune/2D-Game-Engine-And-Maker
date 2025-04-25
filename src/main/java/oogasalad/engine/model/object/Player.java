@@ -65,7 +65,6 @@ public class Player extends GameObject implements ImmutablePlayer {
     Map<String,String> displayedStatsMap = new HashMap<>();
     for (String stat : displayedStats) {
       if (getDoubleParams().containsKey(stat)) {
-        LOG.info("Displayed stat: " + stat + " = " + getDoubleParams().get(stat));
         displayedStatsMap.put(stat,String.valueOf(getDoubleParams().get(stat).intValue()));
       }
       else if (getStringParams().containsKey(stat)) {
@@ -75,18 +74,12 @@ public class Player extends GameObject implements ImmutablePlayer {
     return displayedStatsMap;
   }
 
+  /**
+   * @return a list of stats to display
+   */
   public List<String> getDisplayedStats() {
     return displayedStats;
   }
-
-  /**
-   * sets the value of the current stat to the value provided
-   * @param stat stat to display
-   * @param value the value the stat is set to
-   */
-//  public void setDisplayedStat(String stat, double value) {
-//    displayedStats.put(stat, value);
-//  }
 
   /**
    * Returns a map of hidden stats used for internal calculations.

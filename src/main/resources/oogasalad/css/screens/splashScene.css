@@ -32,6 +32,35 @@ html {
     -fx-text-fill: white;
 }
 
+.select-language-combobox {
+    -fx-border-color: #87dbff;
+}
+
+
+.select-language-combobox:hover {
+    -fx-background-color: #87dbff;
+    -fx-text-fill: white;
+}
+
+.select-language-combobox > .list-cell {
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.select-language-combobox > .list-cell {
+    -fx-alignment: center;
+    -fx-text-alignment: center;
+}
+
+.select-language-combobox:hover > .list-cell:empty {
+    -fx-text-fill: white;
+}
+
+/* Optional: also make selected text white on hover */
+.select-language-combobox:hover > .list-cell {
+    -fx-text-fill: white;
+}
+
 .game-combobox {
     -fx-border-color: #ff746c;
 }
@@ -102,6 +131,15 @@ html {
     -fx-text-fill: white;
 }
 
+.profile-button-style {
+    -fx-border-color: #e399f0;
+}
+
+.profile-button-style:hover {
+    -fx-background-color: #e399f0;
+    -fx-text-fill: white;
+}
+
 .help-button {
     -fx-border-color: #ccccff;
 }
@@ -109,6 +147,37 @@ html {
 .help-button:hover {
     -fx-background-color: #ccccff;
     -fx-text-fill: white;
+}
+
+.play-another-game-button {
+    -fx-border-color: #ffc4df;
+}
+
+.play-another-game-button:hover {
+    -fx-background-color: #ffc4df;
+    -fx-text-fill: white;
+}
+
+.join-server-button {
+    -fx-border-color: #002a6e;
+}
+
+.join-server-button:hover {
+    -fx-background-color: #002a6e;
+    -fx-text-fill: white;
+}
+
+.lobby-textfield {
+    -fx-max-width: 500px;
+    -fx-background-color: #ffffff;     /* white background */
+    -fx-border-color: #002a6e;          /* blue border */
+    -fx-border-width: 3px;
+    -fx-border-radius: 5px;
+    -fx-font-size: 16px;
+    -fx-font-family: "Montserrat", "Lato", sans-serif;
+    -fx-text-fill: #333333;             /* dark text color */
+    -fx-padding: 6px 10px;
+
 }
 
 body {

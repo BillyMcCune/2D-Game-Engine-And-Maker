@@ -1,10 +1,11 @@
 package oogasalad.engine.view;
 
 import java.io.FileNotFoundException;
-import java.util.ResourceBundle;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import oogasalad.ResourceManager;
+import oogasalad.ResourceManagerAPI;
 import oogasalad.engine.model.object.ImmutableGameObject;
 import oogasalad.engine.view.util.ViewObjectToImageConverter;
 
@@ -12,11 +13,12 @@ import oogasalad.engine.view.util.ViewObjectToImageConverter;
  * The {@code ObjectImage} class represents a visual object in the game world, composed of an
  * {@link ImageView} for the sprite and a {@link Rectangle} hitbox for interactions or debugging. It
  * uses a {@link ViewObjectToImageConverter} to convert frame data into visual representation.
+ *
+ * @author Billy McCune, Alana Zinkin
  */
 public class ObjectImage {
 
-  private static final ResourceBundle OBJECT_IMAGE_RESOURCES = ResourceBundle.getBundle(
-      ObjectImage.class.getPackageName() + "." + "ObjectImage");
+  private static final ResourceManagerAPI resourceManager = ResourceManager.getInstance();
 
   private final ViewObjectToImageConverter converter;
   private Rectangle hitBox;
@@ -95,8 +97,10 @@ public class ObjectImage {
    */
   private void displayHitBox(int x, int y, int hitBoxWidth, int hitBoxHeight) {
     this.hitBox = new Rectangle(x, y, hitBoxWidth, hitBoxHeight);
-    hitBox.setArcWidth(Double.parseDouble(OBJECT_IMAGE_RESOURCES.getString("ArcWidth")));
-    hitBox.setArcHeight(Double.parseDouble(OBJECT_IMAGE_RESOURCES.getString("ArcHeight")));
+    hitBox.setArcWidth(
+        Double.parseDouble(resourceManager.getConfig("engine.view.objectimage", "ArcWidth")));
+    hitBox.setArcHeight(
+        Double.parseDouble(resourceManager.getConfig("engine.view.objectimage", "ArcHeight")));
     hitBox.setFill(Color.TRANSPARENT);  // Makes the center clear
     hitBox.setStroke(Color.RED);
   }
