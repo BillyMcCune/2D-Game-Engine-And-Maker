@@ -1,5 +1,8 @@
 package oogasalad.server;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.google.gson.Gson;
 
 /**
@@ -8,8 +11,9 @@ import com.google.gson.Gson;
  * @author Aksel Bell
  */
 public class ServerMessage {
-
   private String type;
+  private String playerCount;
+  private String players;
   private String message;
   private static Gson gson = new Gson();
 
@@ -32,6 +36,23 @@ public class ServerMessage {
    */
   public String getType() {
     return type;
+  }
+
+  /**
+   * Returns the number of people in the current lobby
+   * @return player count
+   */
+  public int getPlayerCount() {
+    return Integer.parseInt(playerCount);
+  }
+
+  /**
+   * Returns the list of people in the current lobby
+   * @return player list
+   */
+  public List<String> getPlayers() {
+    String[] playersArr = players.split(",");
+    return Arrays.asList(playersArr);
   }
 
   /**

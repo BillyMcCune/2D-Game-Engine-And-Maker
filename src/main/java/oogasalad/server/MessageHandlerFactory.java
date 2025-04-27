@@ -135,7 +135,8 @@ public class MessageHandlerFactory {
     return () -> Platform.runLater(() -> {
       try {
         OnlineLobby lobbyDisplay = new OnlineLobby(
-            Integer.parseInt(message.getMessage()),
+            message.getPlayerCount(),
+            message.getPlayers(),
             viewState,
             viewState.getMySocket().getLobby());
         viewState.setDisplay(lobbyDisplay);
