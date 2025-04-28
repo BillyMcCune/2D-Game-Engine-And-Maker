@@ -180,8 +180,6 @@ public class SplashScreen extends Display {
   }
 
   /**
-   * TODO: Refactor createSplashLogo and createSplashBackground for reusable code (DRY)
-   *
    * @return splash background image
    */
   private ImageView createSplashBackground() {
