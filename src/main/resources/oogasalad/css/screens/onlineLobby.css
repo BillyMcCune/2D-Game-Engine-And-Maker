@@ -1,0 +1,57 @@
+html {
+    height: 100%;
+    width: 100%;
+}
+
+.button {
+    -fx-font-family: "Montserrat", "Lato", serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-border-width: 5px;
+    -fx-border-style: solid;
+}
+
+.button:hover {
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.9;
+    -fx-scale-y: 0.9;
+    -fx-text-fill: white;
+}
+
+body {
+    font-family: 'Montserrat', 'Lato', serif;
+    font-weight: bold;
+    font-size: 12px;
+    color: white;
+}
+
+.button-bar {
+    -fx-background-color: peachpuff;
+    -fx-padding: 10;
+    -fx-alignment: center;
+    -fx-spacing: 10;
+}
+
+.top-bar {
+    -fx-background-color: lightgray;
+}
+
+.player-box {
+    -fx-background-color: #ddf5dd;
+}
+
+.game-box {
+    -fx-background-color: lightblue;
+}
+
+.info-label {
+    -fx-font-family: 'Montserrat', 'Lato', serif;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
