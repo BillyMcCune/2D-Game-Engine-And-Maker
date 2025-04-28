@@ -87,6 +87,11 @@ public class GameControlPanel extends Display {
     throw new UnsupportedOperationException(resourceManager.getText("exceptions", "CannotDisplayEndGameScreen"));
   }
 
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
+
   /**
    * Initializes the game control panel buttons based on the properties file
    */

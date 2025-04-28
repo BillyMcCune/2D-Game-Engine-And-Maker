@@ -29,6 +29,14 @@ public interface EngineFileConverterAPI {
   void saveLevelStatus() throws IOException, DataFormatException;
 
   /**
+   * Deprecated loadFileToEngineMethod
+   * @throws IOException if file cannot be found
+   * @throws DataFormatException if the data is improperly formatted
+   */
+  @Deprecated
+  void loadFileToEngine() throws IOException, DataFormatException;
+
+  /**
    * Loads a new level or resumes saved progress by: 1) Calling GameFileParserAPI to parse the file
    * into a standardized data structure 2) Translating that structure into the Engine’s runtime
    * objects 3) Updating the current Engine state

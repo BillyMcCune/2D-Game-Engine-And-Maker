@@ -31,4 +31,14 @@ public interface SaverStrategy {
    */
   void saveSpriteSheet(SpriteSheetData spriteSheetData,
       File outputFile) throws SpriteSheetSaveException;
+
+  /**
+   * Saves the given LevelData object to a file in the standardized format.
+   *
+   * @param level A LevelData instance containing the data to save.
+   * @param file The file to which the data should be written.
+   * @throws IOException If the file cannot be written to or created.
+   */
+  @Deprecated
+  void saveLevelToFile(LevelData level, File file) throws IOException;
 }

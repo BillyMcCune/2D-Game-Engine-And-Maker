@@ -63,5 +63,10 @@ public class NewGameComponents extends Display {
     throw new UnsupportedOperationException(resourceManager.getText("exceptions","CannotRenderEndGameScreen"));
   }
 
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
+
 
 }

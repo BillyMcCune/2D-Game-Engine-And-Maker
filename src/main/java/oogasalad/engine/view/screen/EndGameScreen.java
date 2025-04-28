@@ -54,6 +54,11 @@ public class EndGameScreen extends GameOverlayScreen {
     initialize();
   }
 
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
+
   private void initialize() {
     VBox combinedBox = new VBox();
     VBox textBox = createOverlayTextBox();

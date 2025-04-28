@@ -11,6 +11,7 @@ import oogasalad.ResourceManagerAPI;
 import oogasalad.engine.model.object.ImmutableGameObject;
 import oogasalad.engine.model.object.ImmutablePlayer;
 import oogasalad.engine.view.Display;
+import oogasalad.engine.view.ViewState;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -99,6 +100,11 @@ public class HUD extends Display {
   @Override
   public void renderEndGameScreen(boolean gameWon) {
     throw new UnsupportedOperationException(resourceManager.getText("exceptions", "CannotDisplayEndGameScreen"));
+  }
+
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
   }
 
   private void styleStats(Text statText) {

@@ -90,4 +90,9 @@ public class LevelDisplay extends Display {
     throw new UnsupportedOperationException(resourceManager.getText("exceptions", "CannotDisplayEndGameScreen"));
   }
 
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
+
 }

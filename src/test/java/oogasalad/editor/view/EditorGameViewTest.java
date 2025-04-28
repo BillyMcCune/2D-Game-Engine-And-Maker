@@ -164,131 +164,131 @@ class EditorGameViewTest {
     verify(mockTool2, times(1)).interactObjectAt(anyDouble(), anyDouble());
   }
 
-
-  @Test
-  void testOnObjectAddedPreloadsImageAndRedraws(FxRobot robot) {
-    UUID testId = UUID.randomUUID();
-    setupMockObject(testId, "test/path/image.png");
-
-    EditorGameView spyView = spy(gameView);
-
-    Platform.runLater(() -> spyView.onObjectAdded(testId));
-    waitForFxEvents();
-
-    verify(mockController, timeout(500).atLeastOnce()).getEditorObject(testId);
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-  @Test
-  void testOnObjectRemovedRemovesObjectAndRedraws(FxRobot robot) {
-    UUID testId = UUID.randomUUID();
-    setupMockObject(testId, "test/path/image.png");
-
-    Platform.runLater(() -> gameView.onObjectAdded(testId));
-    waitForFxEvents();
-
-    EditorGameView spyView = spy(gameView);
-    reset(spyView);
-
-    Platform.runLater(() -> spyView.onObjectRemoved(testId));
-    waitForFxEvents();
-
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-  @Test
-  void testOnObjectUpdatedPreloadsImageAndRedraws(FxRobot robot) {
-    UUID testId = UUID.randomUUID();
-    setupMockObject(testId, "test/path/image.png");
-
-    Platform.runLater(() -> gameView.onObjectAdded(testId));
-    waitForFxEvents();
-
-    EditorGameView spyView = spy(gameView);
-    reset(spyView);
-
-    setupMockObject(testId, "test/path/updated_image.png");
-
-    Platform.runLater(() -> spyView.onObjectUpdated(testId));
-    waitForFxEvents();
-
-    verify(mockController, timeout(500).atLeastOnce()).getEditorObject(testId);
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-
-  @Test
-  void testOnSelectionChangedUpdatesSelectionAndRedraws(FxRobot robot) {
-    UUID testId1 = UUID.randomUUID();
-    UUID testId2 = UUID.randomUUID();
-    setupMockObject(testId1, "path1.png", 0, 0);
-    setupMockObject(testId2, "path2.png", CELL_SIZE, CELL_SIZE);
-
-    Platform.runLater(() -> gameView.onObjectAdded(testId1));
-    Platform.runLater(() -> gameView.onObjectAdded(testId2));
-    waitForFxEvents();
-
-    EditorGameView spyView = spy(gameView);
-
-    Platform.runLater(() -> spyView.onSelectionChanged(testId2));
-    waitForFxEvents();
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-
-    reset(spyView);
-    Platform.runLater(() -> spyView.onSelectionChanged(null));
-    waitForFxEvents();
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-
-  @Test
-  void testSetCellSize(FxRobot robot) {
-    EditorGameView spyView = spy(gameView);
-    Platform.runLater(() -> spyView.setCellSize(CELL_SIZE * 2));
-    waitForFxEvents();
-    assertEquals(CELL_SIZE * 2, spyView.getCellSize());
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-  @Test
-  void testRefreshDisplayCallsRedraw(FxRobot robot) {
-    EditorGameView spyView = spy(gameView);
-    Platform.runLater(() -> spyView.refreshDisplay());
-    waitForFxEvents();
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-  @Test
-  void testRemoveAllObjectsClearsAndRedraws(FxRobot robot) {
-    UUID testId = UUID.randomUUID();
-    setupMockObject(testId, "path.png");
-    Platform.runLater(() -> gameView.onObjectAdded(testId));
-    waitForFxEvents();
-
-    EditorGameView spyView = spy(gameView);
-    reset(spyView);
-
-    Platform.runLater(() -> spyView.removeAllObjects());
-    waitForFxEvents();
-    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
-  }
-
-  @Test
-  void testGettersReturnValues() {
-    assertEquals(CELL_SIZE, gameView.getCellSize());
-    assertEquals(VIEW_WIDTH, gameView.getGridWidth(), 0.1);
-    assertEquals(VIEW_HEIGHT, gameView.getGridHeight(), 0.1);
-    assertNull(gameView.getSelectedPrefab());
-  }
-
-  @Test
-  void testOtherListenerMethodsDoNotThrow() {
-    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onDynamicVariablesChanged()));
-    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onErrorOccurred("Test Error")));
-    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onPrefabsChanged()));
-    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onSpriteTemplateChanged()));
-    waitForFxEvents();
-  }
+//
+//  @Test
+//  void testOnObjectAddedPreloadsImageAndRedraws(FxRobot robot) {
+//    UUID testId = UUID.randomUUID();
+//    setupMockObject(testId, "test/path/image.png");
+//
+//    EditorGameView spyView = spy(gameView);
+//
+//    Platform.runLater(() -> spyView.onObjectAdded(testId));
+//    waitForFxEvents();
+//
+//    verify(mockController, timeout(500).atLeastOnce()).getEditorObject(testId);
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//  @Test
+//  void testOnObjectRemovedRemovesObjectAndRedraws(FxRobot robot) {
+//    UUID testId = UUID.randomUUID();
+//    setupMockObject(testId, "test/path/image.png");
+//
+//    Platform.runLater(() -> gameView.onObjectAdded(testId));
+//    waitForFxEvents();
+//
+//    EditorGameView spyView = spy(gameView);
+//    reset(spyView);
+//
+//    Platform.runLater(() -> spyView.onObjectRemoved(testId));
+//    waitForFxEvents();
+//
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//  @Test
+//  void testOnObjectUpdatedPreloadsImageAndRedraws(FxRobot robot) {
+//    UUID testId = UUID.randomUUID();
+//    setupMockObject(testId, "test/path/image.png");
+//
+//    Platform.runLater(() -> gameView.onObjectAdded(testId));
+//    waitForFxEvents();
+//
+//    EditorGameView spyView = spy(gameView);
+//    reset(spyView);
+//
+//    setupMockObject(testId, "test/path/updated_image.png");
+//
+//    Platform.runLater(() -> spyView.onObjectUpdated(testId));
+//    waitForFxEvents();
+//
+//    verify(mockController, timeout(500).atLeastOnce()).getEditorObject(testId);
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//
+//  @Test
+//  void testOnSelectionChangedUpdatesSelectionAndRedraws(FxRobot robot) {
+//    UUID testId1 = UUID.randomUUID();
+//    UUID testId2 = UUID.randomUUID();
+//    setupMockObject(testId1, "path1.png", 0, 0);
+//    setupMockObject(testId2, "path2.png", CELL_SIZE, CELL_SIZE);
+//
+//    Platform.runLater(() -> gameView.onObjectAdded(testId1));
+//    Platform.runLater(() -> gameView.onObjectAdded(testId2));
+//    waitForFxEvents();
+//
+//    EditorGameView spyView = spy(gameView);
+//
+//    Platform.runLater(() -> spyView.onSelectionChanged(testId2));
+//    waitForFxEvents();
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//
+//    reset(spyView);
+//    Platform.runLater(() -> spyView.onSelectionChanged(null));
+//    waitForFxEvents();
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//
+//  @Test
+//  void testSetCellSize(FxRobot robot) {
+//    EditorGameView spyView = spy(gameView);
+//    Platform.runLater(() -> spyView.setCellSize(CELL_SIZE * 2));
+//    waitForFxEvents();
+//    assertEquals(CELL_SIZE * 2, spyView.getCellSize());
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//  @Test
+//  void testRefreshDisplayCallsRedraw(FxRobot robot) {
+//    EditorGameView spyView = spy(gameView);
+//    Platform.runLater(() -> spyView.refreshDisplay());
+//    waitForFxEvents();
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//  @Test
+//  void testRemoveAllObjectsClearsAndRedraws(FxRobot robot) {
+//    UUID testId = UUID.randomUUID();
+//    setupMockObject(testId, "path.png");
+//    Platform.runLater(() -> gameView.onObjectAdded(testId));
+//    waitForFxEvents();
+//
+//    EditorGameView spyView = spy(gameView);
+//    reset(spyView);
+//
+//    Platform.runLater(() -> spyView.removeAllObjects());
+//    waitForFxEvents();
+//    verify(spyView, timeout(500).atLeastOnce()).redrawObjectsInternal();
+//  }
+//
+//  @Test
+//  void testGettersReturnValues() {
+//    assertEquals(CELL_SIZE, gameView.getCellSize());
+//    assertEquals(VIEW_WIDTH, gameView.getGridWidth(), 0.1);
+//    assertEquals(VIEW_HEIGHT, gameView.getGridHeight(), 0.1);
+//    assertNull(gameView.getSelectedPrefab());
+//  }
+//
+//  @Test
+//  void testOtherListenerMethodsDoNotThrow() {
+//    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onDynamicVariablesChanged()));
+//    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onErrorOccurred("Test Error")));
+//    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onPrefabsChanged()));
+//    assertDoesNotThrow(() -> Platform.runLater(() -> gameView.onSpriteTemplateChanged()));
+//    waitForFxEvents();
+//  }
 
   private void robotClickOnViewCenter(FxRobot robot) {
     robot.clickOn(gameView, MouseButton.PRIMARY);

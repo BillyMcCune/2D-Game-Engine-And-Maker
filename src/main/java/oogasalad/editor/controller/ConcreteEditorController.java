@@ -34,10 +34,11 @@ import org.apache.logging.log4j.Logger;
 
 
 /**
- * Concrete implementation of the {@link EditorController} interface. Acts as a mediator between the editor
- * view and the editor data backend ({@link EditorDataAPI}). Manages selection state, active tool,
- * listeners, and delegates specific actions (object placement, prefab management, event handling,
- * object queries, parameter management) to specialized handler classes or directly to the data API.
+ * Concrete implementation of the {@link EditorController} interface. Acts as a mediator between the
+ * editor view and the editor data backend ({@link EditorDataAPI}). Manages selection state, active
+ * tool, listeners, and delegates specific actions (object placement, prefab management, event
+ * handling, object queries, parameter management) to specialized handler classes or directly to the
+ * data API.
  *
  * @author Tatum McKinnis
  */
@@ -61,11 +62,13 @@ public class ConcreteEditorController implements EditorController {
   private int editorHeight = 800;
 
   /**
-   * Constructs a ConcreteEditorController, initializing its data API, listener notifier,
-   * and various helper handlers for specific editor functionalities.
+   * Constructs a ConcreteEditorController, initializing its data API, listener notifier, and
+   * various helper handlers for specific editor functionalities.
    *
-   * @param editorDataAPI The central API for accessing and modifying editor data. Cannot be null.
-   * @param listenerNotifier The notifier responsible for broadcasting events to registered view listeners. Cannot be null.
+   * @param editorDataAPI    The central API for accessing and modifying editor data. Cannot be
+   *                         null.
+   * @param listenerNotifier The notifier responsible for broadcasting events to registered view
+   *                         listeners. Cannot be null.
    */
   public ConcreteEditorController(EditorDataAPI editorDataAPI,
       EditorListenerNotifier listenerNotifier) {
@@ -471,7 +474,8 @@ public class ConcreteEditorController implements EditorController {
       editorDataAPI.getIdentityDataAPI().setStringParameter(objectId, key, value);
       listenerNotifier.notifyObjectUpdated(objectId); // Notify UI to refresh
     } catch (Exception e) {
-      LOG.error("Error setting string parameter '{}' for object {}: {}", key, objectId, e.getMessage(), e);
+      LOG.error("Error setting string parameter '{}' for object {}: {}", key, objectId,
+          e.getMessage(), e);
       listenerNotifier.notifyErrorOccurred("Failed to set string parameter: " + e.getMessage());
     }
   }
@@ -489,7 +493,8 @@ public class ConcreteEditorController implements EditorController {
       editorDataAPI.getIdentityDataAPI().setDoubleParameter(objectId, key, value);
       listenerNotifier.notifyObjectUpdated(objectId); // Notify UI to refresh
     } catch (Exception e) {
-      LOG.error("Error setting double parameter '{}' for object {}: {}", key, objectId, e.getMessage(), e);
+      LOG.error("Error setting double parameter '{}' for object {}: {}", key, objectId,
+          e.getMessage(), e);
       listenerNotifier.notifyErrorOccurred("Failed to set double parameter: " + e.getMessage());
     }
   }
@@ -507,7 +512,8 @@ public class ConcreteEditorController implements EditorController {
       editorDataAPI.getIdentityDataAPI().removeParameter(objectId, key);
       listenerNotifier.notifyObjectUpdated(objectId); // Notify UI to refresh
     } catch (Exception e) {
-      LOG.error("Error removing parameter '{}' for object {}: {}", key, objectId, e.getMessage(), e);
+      LOG.error("Error removing parameter '{}' for object {}: {}", key, objectId, e.getMessage(),
+          e);
       listenerNotifier.notifyErrorOccurred("Failed to remove parameter: " + e.getMessage());
     }
   }
@@ -517,7 +523,9 @@ public class ConcreteEditorController implements EditorController {
    */
   @Override
   public Map<String, String> getObjectStringParameters(UUID objectId) {
-    if (objectId == null) return Collections.emptyMap();
+    if (objectId == null) {
+      return Collections.emptyMap();
+    }
     try {
       return editorDataAPI.getIdentityDataAPI().getStringParameters(objectId);
     } catch (Exception e) {
@@ -532,7 +540,9 @@ public class ConcreteEditorController implements EditorController {
    */
   @Override
   public Map<String, Double> getObjectDoubleParameters(UUID objectId) {
-    if (objectId == null) return Collections.emptyMap();
+    if (objectId == null) {
+      return Collections.emptyMap();
+    }
     try {
       return editorDataAPI.getIdentityDataAPI().getDoubleParameters(objectId);
     } catch (Exception e) {
@@ -576,5 +586,30 @@ public class ConcreteEditorController implements EditorController {
   @Override
   public boolean isSnapToGrid() {
     return snapToGrid;
+  }
+
+  @Override
+  public void addObject(EditorObject editorObject) {
+    return;
+  }
+
+  @Override
+  public EditorObject getObject(double x, double y) {
+    return null;
+  }
+
+  @Override
+  public double getX(EditorObject object) {
+    return 0;
+  }
+
+  @Override
+  public String getName(EditorObject object) {
+    return "";
+  }
+
+  @Override
+  public void save() {
+    return;
   }
 }

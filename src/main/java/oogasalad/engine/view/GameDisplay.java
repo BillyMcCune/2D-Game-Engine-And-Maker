@@ -82,4 +82,9 @@ public class GameDisplay extends Display {
     this.getChildren().add(winScreen);
     winScreen.renderEndGameScreen(gameWon);
   }
+
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
 }

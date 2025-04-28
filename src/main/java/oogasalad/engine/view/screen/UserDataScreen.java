@@ -242,6 +242,11 @@ public class UserDataScreen extends Display {
 //No implementation needed
   }
 
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
+
   /**
    * Navigates to the profile edit screen.
    */

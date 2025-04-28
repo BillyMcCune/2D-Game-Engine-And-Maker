@@ -51,4 +51,9 @@ public class XmlStrategy implements SaverStrategy {
       throw new SpriteSheetSaveException("Could not save sprite sheet data:" + e.getMessage(), e);
     }
   }
+
+  @Override
+  public void saveLevelToFile(LevelData level, File file) throws IOException {
+    return;
+  }
 }

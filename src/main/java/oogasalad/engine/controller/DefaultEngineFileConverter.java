@@ -55,6 +55,11 @@ public class DefaultEngineFileConverter implements EngineFileConverterAPI {
     // TODO: will be implemented soon...
   }
 
+  @Override
+  public void loadFileToEngine() throws IOException, DataFormatException {
+    return;
+  }
+
   /**
    * Loads a new level or resumes saved progress by translating the standardized LevelData structure
    * created by the File Parser into the Engine’s runtime objects

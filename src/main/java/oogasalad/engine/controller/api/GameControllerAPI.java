@@ -83,4 +83,16 @@ public interface GameControllerAPI {
    */
   String getCurrentLevelName();
 
+  /**
+   * deprecated method
+   */
+  @Deprecated
+  void getUpdatedObjects();
+
+  /**
+   * Loads a new level or scene, potentially calling file loaders to retrieve data and
+   * re-initializing internal structures (objects, controllers, etc.).
+   */
+  @Deprecated
+  void loadLevel(LevelData data);
 }

@@ -453,4 +453,47 @@ public interface EditorController {
    */
   boolean isSnapToGrid();
 
+  /**
+   * Adds an editor object
+   *
+   * @param editorObject object to add
+   */
+  @Deprecated
+  void addObject(EditorObject editorObject);
+
+  /**
+   * Returns the EditorObject at the specified coordinates if one exists, otherwise null or an empty
+   * Optional.
+   *
+   * @param x the x-coordinate
+   * @param y the y-coordinate
+   * @return the object at (x, y), or null/Optional.empty if none
+   */
+  @Deprecated
+  EditorObject getObject(double x, double y);
+
+  /**
+   * Gets the x-coordinate for the given EditorObject.
+   *
+   * @param object the EditorObject whose x-coordinate is requested
+   * @return the x-coordinate
+   */
+  @Deprecated
+  double getX(EditorObject object);
+
+  /**
+   * Gets the name or label for the given EditorObject.
+   *
+   * @param object the EditorObject whose name is requested
+   * @return the object's name
+   */
+  @Deprecated
+  String getName(EditorObject object);
+
+  /**
+   * Saves the current editor data (e.g., calls EditorFileAPI behind the scenes).
+   */
+  @Deprecated
+  void save();
+
 }

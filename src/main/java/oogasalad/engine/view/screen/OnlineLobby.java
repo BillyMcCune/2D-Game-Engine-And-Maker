@@ -65,4 +65,9 @@ public class OnlineLobby extends Display {
   public void renderEndGameScreen(boolean gameWon) {
     throw new UnsupportedOperationException(resourceManager.getText("exceptions", "CannotDisplayEndGameScreen"));
   }
+
+  @Override
+  protected void setViewMode(ViewState viewState) throws IllegalStateException {
+    return;
+  }
 }

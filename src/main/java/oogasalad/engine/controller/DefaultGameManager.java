@@ -266,5 +266,4 @@ public class DefaultGameManager implements GameManagerAPI, InputProvider {
     }));
     return gameLoop;
   }
-
 }

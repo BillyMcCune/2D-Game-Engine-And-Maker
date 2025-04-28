@@ -77,4 +77,15 @@ public abstract class Display extends Group {
    * @param gameWon boolean indicating whether the game has been won
    */
   public abstract void renderEndGameScreen(boolean gameWon);
+
+  /**
+   * Changes the current view mode. Different view modes might include normal gameplay, pause menu,
+   * inventory screen, etc.
+   *
+   * @param viewState view state of the game
+   * @throws IllegalStateException if the requested view mode transition is not allowed in the
+   *                               current state
+   */
+  @Deprecated
+  protected abstract void setViewMode(ViewState viewState) throws IllegalStateException;
 }

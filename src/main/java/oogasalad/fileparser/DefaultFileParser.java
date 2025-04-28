@@ -152,5 +152,10 @@ public class DefaultFileParser implements FileParserApi {
       throw new SpriteSheetLoadException("Failed to load spritesheet: " + e.getMessage(), e);
     }
   }
+
+  @Override
+  public List<String> validateFormat(File file) {
+    return null;
+  }
 }
 

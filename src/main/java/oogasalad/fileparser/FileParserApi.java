@@ -1,5 +1,7 @@
 package oogasalad.fileparser;
 
+import java.io.File;
+import java.util.List;
 import oogasalad.exceptions.BlueprintParseException;
 import oogasalad.exceptions.EventParseException;
 import oogasalad.exceptions.GameObjectParseException;
@@ -60,5 +62,15 @@ public interface FileParserApi {
    * @throws SpriteSheetLoadException if an error occurs while parsing the sprite sheet
    */
   public SpriteSheetData parseSpriteSheet(String filePath) throws SpriteSheetLoadException;
+
+  /**
+   * Validates the format and structure of the given file without fully
+   * parsing it, returning a list of any errors or warnings found.
+   *
+   * @param file The file to validate.
+   * @return A list of validation error messages, or an empty list if valid.
+   */
+  @Deprecated
+  List<String> validateFormat(File file);
 
 }
