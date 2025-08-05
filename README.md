@@ -1,4 +1,4 @@
-# Game Engine and Maker
+# Game Engine and Editor
 
 ## It's Thyme to Eat: SALAD
 
